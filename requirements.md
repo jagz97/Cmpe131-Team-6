@@ -2,24 +2,24 @@
 
 ## Functional Requirements
 
-1. requirement
-2. requirement
-3. requirement
-4. requirement
-5. requirement
-6. requirement
-7. requirement
-8. requirement
-9. requirement
-10. requirement
-11. requirement
-12. requirement
+1. login
+2. logout
+3. Create New Account
+4. Delete an Account
+5. Add to cart
+6. User Profile
+7. Add item to seller 
+8. User Rating
+9. Add Pictures for items
+10. Splash Page
+11. Find Items
+12. Buy item
 
 ## Non-functional Requirements
 
-1. non-functional
-2. non-functional
-3. non-functional
+1. Compatibility on Phone
+2. UI Interactive Support
+3. 
 4. non-functional
 
 ## Use Cases
