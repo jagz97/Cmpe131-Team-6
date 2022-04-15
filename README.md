@@ -1,5 +1,5 @@
 # Cmpe131-Team-6
-- Name (@username)
+- Jagjit Singh (@jagz97)
 - Name (@username)
 - Name (@username)
 - Name (@username)
