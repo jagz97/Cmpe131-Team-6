@@ -1,5 +1,3 @@
-## <remove all of the example text and notes in < > such as this one>
-
 ## Functional Requirements
 
 1. login
@@ -19,41 +17,82 @@
 
 1. Compatibility on Phone
 2. UI Interactive Support
-3. 
+3. Multilingual Support
 4. non-functional
 
 ## Use Cases
 
-1. Use Case Name (Should match functional requirement name)
-- **Pre-condition:** <can be a list or short description> Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.
+1. Splash Page
 
-- **Trigger:** <can be a list or short description> Ut enim ad minim veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. 
+-**Summary**: A user visiting the web store will be prompted with a welcome window to choose region and language.
+
+-**Actors**: The user visiting the web store
+
+- **Pre-condition:**
+	- The user has access to internet to sucessfully land on website page.
+  - The user is visitng website on Chrome Web Browser.
+	
+
+- **Trigger:** User visits the website using the URL link.
 
 - **Primary Sequence:**
   
-  1. Ut enim ad minim veniam, quis nostrum e
-  2. Et sequi incidunt 
-  3. Quis aute iure reprehenderit
-  4. ... 
-  5. ...
-  6. ...
-  7. ...
-  8. ...
-  9. ...
-  10. <Try to stick to a max of 10 steps>
+  1. System loads the welcome window.
+  2. System displays two options to choose from; select country/region and language.
+  3. User selects the desired region/country and chooses the desired language.
+  4. User sumbits the request by pressing go button.
+  5. System switches the language to desired language selected by the user.
+  6. System loads and displays the homepage.
+  6. User is presented with the homepage in the selcted language.
 
-- **Primary Postconditions:** <can be a list or short description> 
+- **Primary Postconditions:** 
+  The user gets displayed with the homepage in the selected language.
+  OR
+  The user gets displayed with homepage in the default language. 
 
-- **Alternate Sequence:** <you can have more than one alternate sequence to describe multiple issues that may arise>
+- **Alternate Sequence:** 
   
-  1. Ut enim ad minim veniam, quis nostrum e
-  2. Ut enim ad minim veniam, quis nostrum e
-  3. ...
+  1. The user does not speficy/select a language and presses the close button.
+  2. System automatically selects the default language.
+  3. System loads and displays the homepage.
+  3. User is presented with homepage in default language.
+ 
+2. Find Items
 
-- **Alternate Sequence <optional>:** <you can have more than one alternate sequence to describe multiple issues that may arise>
+- **Summary**: A user can easily look for the available items using search/find items button.
+
+- **Actors**: The user visiting the web store
+
+- **Pre-condition:**
+	- The user has selected the selected the desired language or exited the splash/welcome page.
+	
+- **Trigger:** User clicks the search button.
+
+- **Primary Sequence:**
   
-  1. Ut enim ad minim veniam, quis nostrum e
-  2. Ut enim ad minim veniam, quis nostrum e
-  3. ...
-2. Use Case Name (Should match functional requirement name)
-   ...
+  1. System displays the search bar for user to type in and searh for items.
+  2. User enters the desired name of item/items to be searched.
+  3. User presses the search button.
+  4. System searches for the items in the store.
+  5. System returns matching item/items from the search.
+  6. User is displayed with the items matching the search.
+  
+- **Primary Postconditions:** 
+
+  The user gets displayed with the matching items returned by the search.
+  OR
+  The user gets displayed with no results.
+    - No matching items were found.
+   
+- **Alternate Sequence:** 
+  
+  1. The user entered the item name that does not match available items in store.
+  2. System searches for item in the store and returns no results.
+  3. System displays message saying no items found.
+  4. System prompts user to search for different items.
+
+- **Alternate Sequence:** 
+  
+  1. The user does not enter anything into the search bar and presses search button.
+  2. System searches for item in the store and returns all the available items.
+  3. User gets displayed with all the available items.
