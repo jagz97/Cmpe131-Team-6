@@ -1,41 +1,39 @@
-## <remove all of the example text and notes in < > such as this one>
-
 ## Functional Requirements
 
-1. login
-2. logout
-3. Create New Account
-4. Delete an Account
-5. Add to cart
-6. User Profile
-7. Add item to seller 
-8. User Rating
-9. Add Pictures for items
-10. Splash Page
-11. Find Items
-12. Buy item
+1. login (Nicholas)
+2. logout (Nicholas)
+3. Create New Account (Hector)
+4. Delete an Account (Hector)
+5. Add to cart (Nicholas)
+6. User Profile (Hector)
+7. Add item to seller (Jagjit)
+8. User Rating (Hector)
+9. Add Pictures for items (Jagjit)
+10. Splash Page (Jagjit)
+11. Find Items (Jagjit)
+12. Buy item (Nicholas)
 
 ## Non-functional Requirements
 
-1. Compatibility on Phone
-2. UI Interactive Support
-3. 
-4. non-functional
+1. Compatibility on Phone (Hector)
+2. UI Interactive Support (All of us)
+3. multilingual support (Jagjit)
+4. Dark mode (Nicholas)
 
 ## Use Cases
 
-1. Use Case Name (Should match functional requirement name)
-- **Pre-condition:** <can be a list or short description> Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.
+1. Add to cart
+- **Pre-condition:** User is looking at an item/product and if they decide they want save the item for purchase
 
-- **Trigger:** <can be a list or short description> Ut enim ad minim veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. 
+- **Trigger:** <can be a list or short description> The user clicks a button and the item will be added to their personalized cart
 
 - **Primary Sequence:**
   
-  1. Ut enim ad minim veniam, quis nostrum e
-  2. Et sequi incidunt 
-  3. Quis aute iure reprehenderit
-  4. ... 
-  5. ...
+  1. User first clicks on item they are interested in
+  2. A login page is brought up 
+  3. User types usernamne and password
+  4. User logs into their account
+  5. User 
   6. ...
   7. ...
   8. ...
@@ -55,5 +53,5 @@
   1. Ut enim ad minim veniam, quis nostrum e
   2. Ut enim ad minim veniam, quis nostrum e
   3. ...
-2. Use Case Name (Should match functional requirement name)
+2. Buy Items
    ...
