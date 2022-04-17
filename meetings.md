@@ -1,23 +1,21 @@
 ## Meetings
 
 
-### 2022-04-15 at 13:30
-<meeting template would go here>
-<only fill in template once you had the meeting>
-<see example on the last date>
-<use date format YYYY-MM-DD at HH:MM>
+### 2022-04-09 at 22:45
+Who attended
+- Jagjit, Nicholas, Hector
+Team updates:
+- Jagjit, Nicholas and Hector started on use cases/ split up the work on use cases and requirements. All three will finish the two assigned use cases before due date of Sunday (4/17).
+Summarize group progress:
+- Github repository created and shared with all collaborators.
 
-### 2022-04-22 at 10:30
-<meeting template would go here>
-<only fill in template once you had the meeting>
+### 2022-04-16 at 20:30
+Who attended
+- Jagjit, Nicholas, Hector
+Team updates:
+- Jagjit finished use cases for splash page and find items and created pull requests for their changes. Will research how to implement requirements
+- Hector finished use cases for edit user profile and add user ratings and created pull request for their changes. Will research how to implement requirements
+- Nicholas started on use cases for buy items and add items to cart. Will finish the 2 use cases and research how to implement requirements.
+Summarize group progress:
+- Jagjit and Hectors pull requests were approved and merged onto the main branch
 
-### 2022-04-29 at 10:30
-- Who attended the meeting
-- Team updates (15min or less)
-  <Each team member gives an update of what they did from the last meeting and what they plan to do next. If they are stuck, bring it up here to see if others can help.>
-  - <name> worked on X. Will work on Y next. 
-
-- pair-programming (optional) (25 mins)
-  <- Pair program on one part of the project. Driver will be the person responsible for that requirement.>
-
-- Summarize group progress
