@@ -30,28 +30,51 @@
 - **Primary Sequence:**
   
   1. User first clicks on item they are interested in
-  2. A login page is brought up 
-  3. User types usernamne and password
-  4. User logs into their account
-  5. User 
-  6. ...
-  7. ...
-  8. ...
-  9. ...
-  10. <Try to stick to a max of 10 steps>
+  2. User clicks the "Add to cart" button
+  3. A login page is brought up 
+  4. User types usernamne and password
+  5. User logs into their account
+  6. Item is aded to cart
 
-- **Primary Postconditions:** <can be a list or short description> 
+- **Primary Postconditions:** User is back at items page
 
-- **Alternate Sequence:** <you can have more than one alternate sequence to describe multiple issues that may arise>
+- **Alternate Sequence:** User is already logged into account
   
-  1. Ut enim ad minim veniam, quis nostrum e
-  2. Ut enim ad minim veniam, quis nostrum e
-  3. ...
+  1. User clicks on item they are interested in
+  2. User clicks the "Add item to car" button
+  3. Item is added to cart
+  4. User is brought back to items page
 
-- **Alternate Sequence <optional>:** <you can have more than one alternate sequence to describe multiple issues that may arise>
+- **Alternate Sequence <optional>:** User does not have an account
   
-  1. Ut enim ad minim veniam, quis nostrum e
-  2. Ut enim ad minim veniam, quis nostrum e
-  3. ...
+  1. User first clicks on item they are interested in
+  2. User clicks the "Add to cart" button
+  3. A login page is brought up 
+  4. User clicks on create an account
+  5. User creates an account
+  6. User logs into their account
+  7. Item is aded to cart
+
 2. Buy Items
-   ...
+
+- **Pre-condition:** User has item added into cart and is ready to purchase (meaning that the user already has an account"
+
+- **Trigger:** <can be a list or short description> With an item already in a cart, the user will click a "checkout cart" button to buy items
+
+- **Primary Sequence:** User has an account and is logged in without payment information
+  
+  1. User clicks "checkout item" to begin checkout scenario
+  2. User is brought to a page to input payment information (credit card info)
+  3. User is brought to input shipping information page
+  4. User is brought to confirmation page
+  5. User is brought to "order is confirmed" page
+
+- **Primary Postconditions:** User clicks on "home" button to return to homepage
+
+- **Alternate Sequence:** User has payment information inputed
+  
+  1. User clicks on "checkout item"
+  2. User confirms payment information
+  3. User confirms shipping information
+  4. User is brought to confirmation page
+  5. User is brought to "order is confirmed" page
