@@ -1,5 +1,4 @@
-# Cmpe131-Team-6
+# Cmpe131-Team-6:Amazin
 - Hector Saldivar (@HectorSal) Team Lead
 - Jagjit Singh (@jagz97)
-- Name (@username)
-- Name (@username)
+- Nicholas Bao (@ncik55808)
