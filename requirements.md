@@ -1,28 +1,86 @@
 ## Functional Requirements
 
-1. login
-2. logout
-3. Create New Account
-4. Delete an Account
-5. Add to cart
-6. Update User Profile
-7. Add item to seller 
-8. Add User Rating
-9. Add Pictures for items
-10. Splash Page
-11. Find Items
-12. Buy item
+
+1. login (Nicholas)
+2. logout (Nicholas)
+3. Create New Account (Hector)
+4. Delete an Account (Hector)
+5. Add to cart (Nicholas)
+6. User Profile (Hector)
+7. Add item to seller (Jagjit)
+8. User Rating (Hector)
+9. Add Pictures for items (Jagjit)
+10. Splash Page (Jagjit)
+11. Find Items (Jagjit)
+12. Buy item (Nicholas)
 
 ## Non-functional Requirements
 
-1. Compatibility on Phone
-2. UI Interactive Support
-3. Multilingual Support
-4. 
+1. Compatibility on Phone (Hector)
+2. UI Interactive Support (All of us)
+3. multilingual support (Jagjit)
+4. Dark mode (Nicholas)
 
 ## Use Cases
 
-1. Update User Profile
+1. Add to cart
+- **Pre-condition:** User is looking at an item/product and if they decide they want save the item for purchase
+
+- **Trigger:** The user clicks a button and the item will be added to their personalized cart
+
+- **Primary Sequence:**
+  
+  1. User first clicks on item they are interested in
+  2. User clicks the "Add to cart" button
+  3. A login page is brought up 
+  4. User types usernamne and password
+  5. User logs into their account
+  6. Item is aded to cart
+
+- **Primary Postconditions:** User is back at items page
+
+- **Alternate Sequence:** User is already logged into account
+  
+  1. User clicks on item they are interested in
+  2. User clicks the "Add item to car" button
+  3. Item is added to cart
+  4. User is brought back to items page
+
+- **Alternate Sequence:** User does not have an account
+  
+  1. User first clicks on item they are interested in
+  2. User clicks the "Add to cart" button
+  3. A login page is brought up 
+  4. User clicks on create an account
+  5. User creates an account
+  6. User logs into their account
+  7. Item is aded to cart
+
+2. Buy Items
+
+- **Pre-condition:** User has item added into cart and is ready to purchase (meaning that the user already has an account"
+
+- **Trigger:** With an item already in a cart, the user will click a "checkout cart" button to buy items
+
+- **Primary Sequence:** User has an account and is logged in without payment information
+  
+  1. User clicks "checkout item" to begin checkout scenario
+  2. User is brought to a page to input payment information (credit card info)
+  3. User is brought to input shipping information page
+  4. User is brought to confirmation page
+  5. User is brought to "order is confirmed" page
+
+- **Primary Postconditions:** User clicks on "home" button to return to homepage
+
+- **Alternate Sequence:** User has payment information inputed
+  
+  1. User clicks on "checkout item"
+  2. User confirms payment information
+  3. User confirms shipping information
+  4. User is brought to confirmation page
+  5. User is brought to "order is confirmed" page
+
+3. Update User Profile
 - **Pre-condition:** the user needs to be signed in to an account in order to access the user profile page
 
 - **Trigger:** the user profile button is pressed that will appear on either a sidebar or a topbar. 
@@ -49,7 +107,7 @@
   1. The user clicks on the cancel button
   2. The textbox to enter the new variable disappears.
 
-2. Add User Rating
+4. Add User Rating
 - **Pre-condition:** the user needs to be signed in to an account and must have purchased an item in order to add a rating for the item
 
 - **Trigger:** the user clicks on the add rating button/ edit rating button  on the item page
@@ -72,7 +130,7 @@
   2. An "are you sure you want to leave this review" message pops up.
   3. The user clicks on the "leave" button to return to the item page.
 
-3. Splash Page
+5. Splash Page
 
 -**Summary**: A user visiting the web store will be prompted with a welcome window to choose region and language.
 
@@ -107,7 +165,7 @@
   3. System loads and displays the homepage.
   3. User is presented with homepage in default language.
  
-4. Find Items
+6. Find Items
 
 - **Summary**: A user can easily look for the available items using search/find items button.
 
