@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+
+{% for message in messages %}
+<li>{{ message }}</li>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<div class="container">
+
+
+    <h2 class="text-center">Add your Product</h2>
+
+    <form action="" method="POST">
+
+        <div class="form-contrl">
+            <label for="form-control" class="form-label">{{ form.name.label }}</label>
+            <p>{{ form.name(size=32) }}</p>
+
+            <label for="form-control" class="form-label">{{form.description.label}}</label>
+            <p>{{ form.description(size=100) }}</p>
+
+            <label for="form-control" class="form-label">{{ form.discount.label }}</label>
+            <p>{{ form.discount(size=99) }}</p>
+
+            <label for="brand">Select Category</label>
+            <select class="form-select" aria-label="Default select example">
+                {% for i in category %}
+                <option value="brand.id">{{i.name}}</option>
+                {% endfor %}
+            </select>
+
+            <label for="brand">Select Brand</label>
+            <select class="form-select" multiple aria-label="multiple select example">
+
+                {% for i in brands %}
+                <option value="brand.id">{{i.name}}</option>
+                {% endfor %}
+            </select>
+
+
+            <label for="form-control" class="form-label">{{ form.price.label }}</label>
+            <p>{{ form.price(size=10000) }}</p>
+
+            <label for="form-control" class="form-label"> {{ form.availableStock.label }}</label>
+            <p>{{ form.availableStock(size=1000) }}</p>
+
+            <p>
+                {{ form.image.label }}
+                {{ form.image }}
+            </p>
+            <p>
+                {{ form.image2.label }}
+                {{ form.image2 }}
+            </p>
+            <p>
+                {{ form.image2.label }}
+                {{ form.image2 }}
+            </p>
+            <p>
+                {{ form.submit() }}
+            </p>
+
+
+
+        </div>
+
+
+
+
+    </form>
+
+
+</div>
+
+{% endblock %}
