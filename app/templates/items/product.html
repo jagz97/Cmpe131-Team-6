@@ -1,81 +1,88 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div>
 
-{% with messages = get_flashed_messages() %}
-{% if messages %}
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
 
-{% for message in messages %}
-<li>{{ message }}</li>
-{% endfor %}
-{% endif %}
-{% endwith %}
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <h1>ADD Product</h1>
+    <form enctype=multipart/form-data action="{{ url_for('addproduct') }}" method="POST">
 
-<div class="container">
+        <p>
+            {{ form.name.label }}
+            {{ form.name(size=32) }}
+
+        </p>
+
+        <p>
+            {{ form.description.label }}
+            {{ form.description() }}
+
+        </p>
+
+        <p>
+            {{ form.discount.label }}
+            {{ form.discount(size=3) }}
+
+        </p>
+
+        <p>
+            {{ form.price.label }}
+            {{ form.price(size=32) }}
+
+        </p>
+
+        <p>
+            {{ form.availableStock.label }}
+            {{ form.availableStock (size=32) }}
+
+        </p>
 
 
-    <h2 class="text-center">Add your Product</h2>
-
-    <form action="" method="POST">
-
-        <div class="form-contrl">
-            <label for="form-control" class="form-label">{{ form.name.label }}</label>
-            <p>{{ form.name(size=32) }}</p>
-
-            <label for="form-control" class="form-label">{{form.description.label}}</label>
-            <p>{{ form.description(size=100) }}</p>
-
-            <label for="form-control" class="form-label">{{ form.discount.label }}</label>
-            <p>{{ form.discount(size=99) }}</p>
-
-            <label for="brand">Select Category</label>
-            <select class="form-select" aria-label="Default select example">
-                {% for i in category %}
-                <option value="brand.id">{{i.name}}</option>
+        <p>
+            <label for="category">Add a Category</label>
+            <select name="category" id="category" required>
+                <option value="">Pick category</option>
+                {% for i in categories %}
+                <option value="category.id"> {{i.name}} </option>
                 {% endfor %}
+
             </select>
 
-            <label for="brand">Select Brand</label>
-            <select class="form-select" multiple aria-label="multiple select example">
+            <a href="{{ url_for('addcategory') }}" class="link-primary">Add Category</a>
 
+        </p>
+
+        <p>
+            <label for="brand">Add a Brand</label>
+            <select name="brand" id="brand" required>
+                <option value="">Pick Brand</option>
                 {% for i in brands %}
-                <option value="brand.id">{{i.name}}</option>
+                <option value="brand.id"> {{i.name}} </option>
                 {% endfor %}
             </select>
 
+            <a href="{{ url_for('addbrand') }}" class="link-primary">Add Brand</a>
 
-            <label for="form-control" class="form-label">{{ form.price.label }}</label>
-            <p>{{ form.price(size=10000) }}</p>
-
-            <label for="form-control" class="form-label"> {{ form.availableStock.label }}</label>
-            <p>{{ form.availableStock(size=1000) }}</p>
-
-            <p>
-                {{ form.image.label }}
-                {{ form.image }}
-            </p>
-            <p>
-                {{ form.image2.label }}
-                {{ form.image2 }}
-            </p>
-            <p>
-                {{ form.image2.label }}
-                {{ form.image2 }}
-            </p>
-            <p>
-                {{ form.submit() }}
-            </p>
+        </p>
 
 
+        <p>
+            <input type=file name=photo>
+            <input type=file name=photo1>
+            <input type=file name=photo2>
+        </p>
 
-        </div>
-
-
-
-
+        <p>
+            {{ form.submit() }}
+        </p>
     </form>
-
-
 </div>
 
 {% endblock %}
