@@ -17,13 +17,13 @@ class Address(db.Model):
     state_province_region = db.Column(db.String(128), nullable=False)
     zip_postal_code = db.Column(db.String(32), nullable=False)
     country = db.Column(db.String(64), nullable=False)
-    user = db.relationship('User', back_populates='Address')
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), index=True, nullable=False, unique=True)
     email = db.Column(db.String(30), index =True, nullable=False, unique=True)
-    password_hash = db.Column(db.String(128)
-    shipping_address = db.relationship('Address', back_populates='User', uselist=False)
+    password_hash = db.Column(db.String(128))
+    shipping_addresses = db.relationship('Address', backref="user", lazy='dynamic')
 
 db.create_all()
