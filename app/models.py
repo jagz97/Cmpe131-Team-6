@@ -6,6 +6,7 @@ from datetime import datetime
 
 
 class AddProduct(db.Model):
+    __searchable__= ['name','description']
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(1000), nullable=False)
