@@ -2,7 +2,7 @@ from app import app as app
 from app import db, photos
 from unicodedata import category
 from flask import render_template, redirect, url_for, request, flash, session
-from app.forms import Products, LoginForm, SignUpForm, ReviewForm
+from app.forms import Products, LoginForm, SignUpForm, ReviewForm, EditUsernameForm, EditPasswordForm, EditEmailForm, AddressForm
 from app.models import Brand, Category, AddProduct, User, Review
 from flask_wtf import FlaskForm
 from wtforms import StringField
@@ -106,20 +106,20 @@ def signup():
 @app.route('/product/<product_id>', methods=['GET', 'POST'])
 def productpage(product_id):
     product = AddProduct.query.get(product_id)
-    if request.form['rate_button'] == 'Rate Product':
+    if request.form['Rate Product'] == 'Rate Product':
         session['product_id'] = product_id
-        if 'username' in db.session:# if user is logged in, route to review page, otherwise, route to login page
+        if 'username' in session:# if user is logged in, route to review page, otherwise, route to login page
             return redirect(url_for('/product/review'))
         session.pop('product_id', None)
         return redirect(url_for('/login'))
-    return render_template('productDetails.html', title='Product Details', product=product)
+    return render_template('items/productDetails.html', title='Product Details', product=product)
 
 
 @app.route('/product/review', methods=['GET', 'POST'])
 def review():
     # if the cancel button is pressed, then route to the product page
     form = ReviewForm(request.form)
-    if request.form['cancel_button'] == 'Cancel review':
+    if request.form['Cancel Review'] == 'Cancel Review':
         product_id = db.session['product']
         url = '/product/' + product_id
         session.pop('product_id', None)
@@ -153,7 +153,21 @@ def review():
                 return redirect(url_for(url))
             else: # the product or the user is not in session, so the page is rerouted to the home page
                 return redirect(url_for(''))
-    return render_template('productDetails.html', title='Product Review')
+    return render_template('items/productReview.html', title='Product Review', form=form)
 
-
-
+@app.route('/user/profile', methods=['GET', 'POST'])
+def userprofile():
+    if 'username' in session:
+        user_id = session['id']
+        user = User.query.get(user_id)
+        if request.form['Edit Username'] == 'Edit Username':
+            form = EditUsernameForm(request.form)
+        if request.form[''] == 'Edit Email':
+            form = EditEmailForm(request.form)
+        if request.form['Edit Password'] == 'Edit Password':
+            form = EditPasswordForm(request.form)
+        if request.form['Edit Address'] == 'Edit Address':
+            form = AddressForm
+    else:
+        return redirect(url_for('/login'))
+    return render_template('items/productReview.html', title='Product Review', form=form, user=user)

@@ -52,3 +52,20 @@ class ReviewForm(FlaskForm):
     rating = IntegerField('# of Stars', validators=[DataRequired()])
     review = StringField('Enter review')
     submit = SubmitField('Add rating')
+
+
+class EditUsernameForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    submit = SubmitField('Edit Username')
+
+
+class EditEmailForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired()])
+    submit = SubmitField('Edit Email')
+
+
+class EditPasswordForm(FlaskForm):
+    current_password = PasswordField('Current Password', validators=[DataRequired()])
+    confirm_current_password = PasswordField('Confirm Current Password', validators=[DataRequired()])
+    new_password = PasswordField('New Password', validators=[DataRequired()])
+    submit = SubmitField('Edit Password')
