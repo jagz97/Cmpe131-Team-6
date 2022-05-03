@@ -30,9 +30,9 @@ class LoginForm(FlaskForm):
 
 
 class SignUpForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired])
-    username = StringField('Username', validators=[DataRequired])
-    password = PasswordField('Password', validators=[DataRequired])
+    email = StringField('Email', validators=[DataRequired()])
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
     isMerchant = BooleanField('Merchant Account')
     submit = SubmitField('Sign Up')
 
@@ -49,6 +49,6 @@ class AddressForm(FlaskForm):
 
 
 class ReviewForm(FlaskForm):
-    rating = IntegerField('# of Stars', validators=[DataRequired])
+    rating = IntegerField('# of Stars', validators=[DataRequired()])
     review = StringField('Enter review')
     submit = SubmitField('Add rating')
