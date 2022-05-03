@@ -13,7 +13,7 @@
     {% endwith %}
     <h1>ADD Product</h1>
     <form enctype=multipart/form-data action="{{ url_for('addproduct') }}" method="POST">
-
+        {{form.hidden_tag()}}
         <p>
             {{ form.name.label }}
             {{ form.name(size=32) }}
@@ -71,12 +71,13 @@
             <a href="{{ url_for('addbrand') }}" class="link-primary">Add Brand</a>
 
         </p>
+        {{ form.image }}
+        {{ form.image_1 }}
+        {{ form.image_2 }}
 
 
         <p>
-            <input type=file name=photo>
-            <input type=file name=photo1>
-            <input type=file name=photo2>
+
         </p>
 
         <p>
