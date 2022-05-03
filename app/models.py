@@ -62,7 +62,7 @@ class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), index=True, nullable=False)
     rating = db.Column(db.Integer, nullable=false)
-    review = db.Column(db.string(8000))
+    review = db.Column(db.String(8000))
 
 
 db.create_all()
