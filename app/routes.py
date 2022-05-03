@@ -1,7 +1,7 @@
 from app import app as app
 from app import db, photos
 from unicodedata import category
-from flask import render_template, redirect, url_for, request, flash
+from flask import render_template, redirect, url_for, request, flash, session
 from app.forms import Products, LoginForm, SignUpForm, ReviewForm
 from app.models import Brand, Category, AddProduct, User, Review
 from flask_wtf import FlaskForm
@@ -77,9 +77,9 @@ def addproduct():
 
 @app.route('/signUp', methods=['GET', 'POST'])
 def signup():
-    db.session['id'] = None
-    db.session['username'] = None
-    db.session['email'] = None
+    session.pop('id', None)
+    session.pop('username', None)
+    session.pop('email', None)
     form = SignUpForm(request.form)
     if request.method == "POST":
         if form.validate_on_submit():
@@ -92,9 +92,9 @@ def signup():
             try:
                 db.session.add(newuser)
                 user = User.query.filter_by(username=username).first()
-                db.session['id'] = user.id
-                db.session['username'] = username
-                db.session['email'] = email
+                session['id'] = user.id
+                session['username'] = username
+                session['email'] = email
                 flash('Account created for user {}'.format(form.username.data))
                 return redirect(url_for('/'))
             except exc.SQLAlchemyError as e:
@@ -107,10 +107,10 @@ def signup():
 def productpage(product_id):
     product = AddProduct.query.get(product_id)
     if request.form['rate_button'] == 'Rate Product':
-        db.session['product_id'] = product_id
+        session['product_id'] = product_id
         if 'username' in db.session:# if user is logged in, route to review page, otherwise, route to login page
             return redirect(url_for('/product/review'))
-        db.session['product_id'] = None
+        session.pop('product_id', None)
         return redirect(url_for('/login'))
     return render_template('productDetails.html', title='Product Details', product=product)
 
@@ -122,14 +122,14 @@ def review():
     if request.form['cancel_button'] == 'Cancel review':
         product_id = db.session['product']
         url = '/product/' + product_id
-        db.session['product_id'] = None
+        session.pop('product_id', None)
         return redirect(url_for(url))
         # if a user is logged in and has selected a product to review, then the review is added
     if request.method == "POST":
         if form.validate_on_submit():
-            if 'product_id' in db.session and 'username' in db.session:
-                product_id = db.session['product']
-                username = db.session['username']
+            if 'product_id' in session and 'username' in session:
+                product_id = session['product']
+                username = session['username']
                 reviewExists = False
                 # get the old review object if it exists
                 product = AddProduct.query.get(product_id)
@@ -149,7 +149,7 @@ def review():
                     oldReview = Review.query.get(review_id)
                     oldReview.update(dict(rating=rating, review=review))
                 url = '/product/' + product_id
-                db.session['product_id'] = None
+                session.pop('product_id', None)
                 return redirect(url_for(url))
             else: # the product or the user is not in session, so the page is rerouted to the home page
                 return redirect(url_for(''))
