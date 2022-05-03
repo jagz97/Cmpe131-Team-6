@@ -77,9 +77,9 @@ def addproduct():
 
 @app.route('/signUp', methods=['GET', 'POST'])
 def signup():
-    db.session.pop('id', None)
-    db.session.pop('username', None)
-    db.session.pop('email', None)
+    db.session['id'] = None
+    db.session['username'] = None
+    db.session['email'] = None
     form = SignUpForm(request.form)
     if request.method == "POST":
         if form.validate_on_submit():
@@ -96,7 +96,7 @@ def signup():
                 db.session['username'] = username
                 db.session['email'] = email
                 flash('Account created for user {}'.format(form.username.data))
-                return redirect(url_for(''))
+                return redirect(url_for('/'))
             except exc.SQLAlchemyError as e:
                 db.session.rollback()
                 print(type(e))
@@ -109,9 +109,9 @@ def productpage(product_id):
     if request.form['rate_button'] == 'Rate Product':
         db.session['product_id'] = product_id
         if 'username' in db.session:# if user is logged in, route to review page, otherwise, route to login page
-            return redirect(url_for('product/review'))
-        db.session.pop('product_id', None)
-        return redirect(url_for('login'))
+            return redirect(url_for('/product/review'))
+        db.session['product_id'] = None
+        return redirect(url_for('/login'))
     return render_template('productDetails.html', title='Product Details', product=product)
 
 
@@ -121,8 +121,8 @@ def review():
     form = ReviewForm(request.form)
     if request.form['cancel_button'] == 'Cancel review':
         product_id = db.session['product']
-        url = 'product/' + product_id
-        db.session.pop('product_id', None)
+        url = '/product/' + product_id
+        db.session['product_id'] = None
         return redirect(url_for(url))
         # if a user is logged in and has selected a product to review, then the review is added
     if request.method == "POST":
@@ -148,8 +148,8 @@ def review():
                 else:
                     oldReview = Review.query.get(review_id)
                     oldReview.update(dict(rating=rating, review=review))
-                url = 'product/' + product_id
-                db.session.pop('product_id', None)
+                url = '/product/' + product_id
+                db.session['product_id'] = None
                 return redirect(url_for(url))
             else: # the product or the user is not in session, so the page is rerouted to the home page
                 return redirect(url_for(''))
