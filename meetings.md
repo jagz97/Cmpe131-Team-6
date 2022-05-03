@@ -19,3 +19,5 @@ Team updates:
 Summarize group progress:
 - Jagjit and Hectors pull requests were approved and merged onto the main branch
 
+### 2022-05-02 at 22:45
+Who attended
