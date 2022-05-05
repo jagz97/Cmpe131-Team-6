@@ -7,7 +7,6 @@ from app.models import Brand, Category, AddProduct, User, Review
 from flask_wtf import FlaskForm
 from wtforms import StringField
 from hashlib import md5
-from sqlalchemy import exc
 
 @app.route('/')
 def home():
@@ -82,24 +81,29 @@ def signup():
     session.pop('email', None)
     form = SignUpForm(request.form)
     if request.method == "POST":
-        if form.validate_on_submit():
-            username = form.username.data
-            email = form.email.data
-            password = form.password.data
-            password_hash = md5(password.encode())
-            is_merchant = form.isMerchant.data
-            newuser = User(username=username, email=email, password_hash=password_hash, is_merchant=is_merchant)
-            try:
-                db.session.add(newuser)
-                user = User.query.filter_by(username=username).first()
-                session['id'] = user.id
-                session['username'] = username
-                session['email'] = email
-                flash('Account created for user {}'.format(form.username.data))
-                return redirect(url_for('/'))
-            except exc.SQLAlchemyError as e:
-                db.session.rollback()
-                print(type(e))
+        username = form.username.data
+        email = form.email.data
+        password = form.password.data
+        password_hash = md5(password.encode())
+        full_name = form.full_name
+        address_line_one = form.address_line_one
+        address_line_two = form.address_line_two
+        city = form.city
+        state_province_region = form.state_province_region
+        zip_postal_code = form.zip_postal_code
+        country = form.country
+        newuser = User(username=username, email=email, password_hash=password_hash, full_name=full_name,
+                       address_line_one=address_line_one, address_line_two=address_line_two,
+                       city=city, state_province_region=state_province_region, zip_postal_code=zip_postal_code,
+                       country=country)
+        db.session.add(newuser)
+        user = User.query.filter_by(username=username).first()
+        session['id'] = user.id
+        session['username'] = username
+        session['email'] = email
+        db.session.commit()
+        flash('Account created for user {}'.format(form.username.data))
+        return redirect(url_for(''))
     return render_template('signUp.html', title='Sign Up', form=form)
 
 
@@ -133,21 +137,21 @@ def review():
                 reviewExists = False
                 # get the old review object if it exists
                 product = AddProduct.query.get(product_id)
-                for review in product.reviews:
-                    if review.username == username:
-                            reviewExists == True
-                            review_id = review.id
+                #for review in product.reviews:
+                #    if review.username == username:
+                #            reviewExists == True
+                #            review_id = review.id
                 rating = form.rating.data
                 review = form.review.data
-                # if there is no review, then add a review
-                if not reviewExists:
-                    newreview = Review(username=username, rating=rating, review=review, product_id=product_id)
-                    flash(f'Your review has been added')
-                    db.session.add(newreview)
-                # else update the old review
-                else:
-                    oldReview = Review.query.get(review_id)
-                    oldReview.update(dict(rating=rating, review=review))
+                ## if there is no review, then add a review
+                #if not reviewExists:
+                newreview = Review(username=username, rating=rating, review=review, product_id=product_id)
+                flash(f'Your review has been added')
+                #    db.session.add(newreview)
+                ## else update the old review
+                #else:
+                #    oldReview = Review.query.get(review_id)
+                #    oldReview.update(dict(rating=rating, review=review))
                 url = '/product/' + product_id
                 session.pop('product_id', None)
                 return redirect(url_for(url))
@@ -161,13 +165,52 @@ def userprofile():
         user_id = session['id']
         user = User.query.get(user_id)
         if request.form['Edit Username'] == 'Edit Username':
-            form = EditUsernameForm(request.form)
+            edit_username_form = EditUsernameForm(request.form)
+            if edit_username_form.validate_on_submit():
+                new_username = edit_username_form.username
+                user.update(dict(username=new_username))
         if request.form[''] == 'Edit Email':
-            form = EditEmailForm(request.form)
+            edit_email_form = EditEmailForm(request.form)
+            if edit_email_form.validate_on_submit():
+                new_email = edit_email_form.email
+                user.update(dict(email=new_email))
         if request.form['Edit Password'] == 'Edit Password':
-            form = EditPasswordForm(request.form)
+            edit_password_form = EditPasswordForm(request.form)
+            if edit_password_form.validate_on_submit():
+                current_password = edit_password_form.current_password
+                confirm_current_password = edit_password_form.confirm_current_password
+                new_password = edit_password_form.new_password
+                current_password_hash = md5(current_password.encode())
+                confirm_current_password_hash = md5(confirm_current_password.encode())
+                new_password_hash = md5(new_password.encode())
+                if current_password_hash == confirm_current_password_hash:
+                    if (user.password_hash == current_password_hash):
+                        user.update(dict(password_hash=new_password_hash))
+                    else:
+                        flash('The password is incorrect')
+                else:
+                    flash('The two passwords do not match')
         if request.form['Edit Address'] == 'Edit Address':
-            form = AddressForm
+            edit_address_form = AddressForm
+            if edit_address_form.validate_on_submit():
+                full_name = edit_address_form.full_name
+                address_line_one = edit_address_form.address_line_one
+                address_line_two = edit_address_form.address_line_two
+                city = edit_address_form.city
+                state_province_region = edit_address_form.state_province_region
+                zip_postal_code = edit_address_form.zip_postal_code
+                country = edit_address_form.country
+                if address_line_two == None:
+                    user.update(dict(full_name=full_name, address_line_one=address_line_one, city=city,
+                                     state_province_region=state_province_region, zip_postal_code=zip_postal_code,
+                                     country=country))
+                else:
+                    user.update(dict(full_name=full_name, address_line_one=address_line_one,
+                                     address_line_two=address_line_two, city=city,
+                                     state_province_region=state_province_region,
+                                     zip_postal_code=zip_postal_code, country=country))
     else:
         return redirect(url_for('/login'))
-    return render_template('items/productReview.html', title='Product Review', form=form, user=user)
+    return render_template('userProfile.html', title='User Profile', edit_username_form=edit_username_form,
+                           edit_email_form=edit_email_form, edit_password_form=edit_password_form,
+                           edit_address_form=edit_address_form, user=user)

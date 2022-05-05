@@ -14,7 +14,7 @@ class AddProduct(db.Model):
     price = db.Column(db.Numeric(10, 2), nullable=False)
     availablestock = db.Column(db.Integer, nullable=False)
     pub_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    reviews = db.relationship('Review', backref="product", lazy='dynamic')
+    reviews = db.relationship('Review', backref=db.backref('reviews', lazy=True))
     review_id = db.Column(db.Integer, db.ForeignKey('review.id'), nullable=False)
 
     category_id = db.Column(db.Integer, db.ForeignKey(
@@ -48,7 +48,6 @@ class User(db.Model):
     username = db.Column(db.String(32), index=True, nullable=False, unique=True)
     email = db.Column(db.String(32), index=True, nullable=False, unique=True)
     password_hash = db.Column(db.String(32), nullable=False)
-    is_merchant = db.Column(db.Boolean, default=False)
     full_name = db.Column(db.String(128))
     address_line_one = db.Column(db.String(256))
     address_line_two = db.Column(db.String(256))

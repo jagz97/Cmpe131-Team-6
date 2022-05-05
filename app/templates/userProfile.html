@@ -14,17 +14,15 @@
         <input type="submit" name="Edit Username" value="Edit Username">
     </form>
 
-    {% if form %}
-        {% if form.username %}
-            <form action="" method="post" novalidate>
-                {{ form.hidden_tag() }}
-            <p>
-                {{ form.username.label }}<br>
-                {{ form.username(size=32) }}
-            </p>
-            <p>{{ form.submit() }}</p>
-            </form>
-        {% endif %}
+    {% if edit_username_form %}
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+        <p>
+            {{ form.username.label }}<br>
+            {{ form.username(size=32) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+        </form>
     {% endif %}
 
     {% if user %}
@@ -37,42 +35,38 @@
         <input type="submit" name="Edit Email" value="Edit Email">
     </form>
 
-    {% if form %}
-        {% if form.email %}
-            <form action="" method="post" novalidate>
-                {{ form.hidden_tag() }}
-            <p>
-                {{ form.email.label }}<br>
-                {{ form.email(size=32) }}
-            </p>
-            <p>{{ form.submit() }}</p>
-            </form>
-        {% endif %}
+    {% if edit_email_form %}
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+        <p>
+            {{ form.email.label }}<br>
+            {{ form.email(size=32) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+        </form>
     {% endif %}
 
     <form>
         <input type="submit" name="Edit Password" value="Edit Password">
     </form>
 
-    {% if form %}
-        {% if form.current_password %}
-            <form action="" method="post" novalidate>
-                {{ form.hidden_tag() }}
-            <p>
-                {{ form.current_password }}<br>
-                {{ form.current_password(size=32) }}
-            </p>
-            <p>
-                {{ form.confirm_current_password }}<br>
-                {{ form.confirm_current_password(size=32) }}
-            </p>
-            <p>
-                {{ form.new_password }}<br>
-                {{ form.new_password(size=32) }}
-            </p>
-            <p>{{ form.submit() }}</p>
-            </form>
-        {% endif %}
+    {% if edit_passowrd_form %}
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+        <p>
+            {{ form.current_password }}<br>
+            {{ form.current_password(size=32) }}
+        </p>
+        <p>
+            {{ form.confirm_current_password }}<br>
+            {{ form.confirm_current_password(size=32) }}
+        </p>
+        <p>
+            {{ form.new_password }}<br>
+            {{ form.new_password(size=32) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+        </form>
     {% endif %}
 
     {% if user %}
@@ -90,41 +84,39 @@
     <form>
         <input type="submit" name="Edit Address" value="Edit Address">
     </form>
-    {% if form %}
-        {% if form.full_name %}
-            <form action="" method="post" novalidate>
-                {{ form.hidden_tag() }}
-            <p>
-                {{ form.full_name }}<br>
-                {{ form.full_name(size=32) }}
-            </p>
-            <p>
-                {{ form.address_line_one }}<br>
-                {{ form.address_line_one(size=256) }}
-            </p>
-            <p>
-                {{ form.address_line_two }}<br>
-                {{ form.address_line_two(size=256) }}
-            </p>
-            <p>
-                {{ form.city }}<br>
-                {{ form.city(size=128) }}
-            </p>
-            <p>
-                {{ form.state_province_region }}<br>
-                {{ form.state_province_region(size=128) }}
-            </p>
-            <p>
-                {{ form.zip_postal_code }}<br>
-                {{ form.zip_postal_code(size=32) }}
-            </p>
-            <p>
-                {{ form.country }}<br>
-                {{ form.country(size=64) }}
-            </p>
-            <p>{{ form.submit() }}</p>
-            </form>
-        {% endif %}
+    {% if edit_address_form %}
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+        <p>
+            {{ form.full_name }}<br>
+            {{ form.full_name(size=32) }}
+        </p>
+        <p>
+            {{ form.address_line_one }}<br>
+            {{ form.address_line_one(size=256) }}
+        </p>
+        <p>
+            {{ form.address_line_two }}<br>
+            {{ form.address_line_two(size=256) }}
+        </p>
+        <p>
+            {{ form.city }}<br>
+            {{ form.city(size=128) }}
+        </p>
+        <p>
+            {{ form.state_province_region }}<br>
+            {{ form.state_province_region(size=128) }}
+        </p>
+        <p>
+            {{ form.zip_postal_code }}<br>
+            {{ form.zip_postal_code(size=32) }}
+        </p>
+        <p>
+            {{ form.country }}<br>
+            {{ form.country(size=64) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+        </form>
     {% endif %}
 
 

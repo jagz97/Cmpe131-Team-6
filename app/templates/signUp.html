@@ -17,6 +17,34 @@
             {{ form.password.label }}<br>
             {{ form.password(size=32) }}
         </p>
+        <p>
+            {{ form.full_name }}<br>
+            {{ form.full_name(size=32) }}
+        </p>
+        <p>
+            {{ form.address_line_one }}<br>
+            {{ form.address_line_one(size=256) }}
+        </p>
+        <p>
+            {{ form.address_line_two }}<br>
+            {{ form.address_line_two(size=256) }}
+        </p>
+        <p>
+            {{ form.city }}<br>
+            {{ form.city(size=128) }}
+        </p>
+        <p>
+            {{ form.state_province_region }}<br>
+            {{ form.state_province_region(size=128) }}
+        </p>
+        <p>
+            {{ form.zip_postal_code }}<br>
+            {{ form.zip_postal_code(size=32) }}
+        </p>
+        <p>
+            {{ form.country }}<br>
+            {{ form.country(size=64) }}
+        </p>
         <p>{{ form.submit() }}</p>
     </form>
 

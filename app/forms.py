@@ -33,8 +33,14 @@ class SignUpForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
-    isMerchant = BooleanField('Merchant Account')
-    submit = SubmitField('Sign Up')
+    full_name = StringField('Full Name', validators=[DataRequired()])
+    address_line_one = StringField('Address Line 1', validators=[DataRequired()])
+    address_line_two = StringField('Address Line 2')
+    city = StringField('City', validators=[DataRequired()])
+    state_province_region = StringField('State/Province/Region', validators=[DataRequired()])
+    zip_postal_code = StringField('ZIP/Postal Code', validators=[DataRequired()])
+    country = StringField('Country', validators=[DataRequired()])
+    submit = SubmitField('Add Address')
 
 
 class AddressForm(FlaskForm):
