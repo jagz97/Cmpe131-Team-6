@@ -17,6 +17,7 @@ class Products(FlaskForm):
         'Available Stock', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+
     image = FileField('Image 1', validators=[
         FileRequired(), FileAllowed(['png', 'gif', 'jpg', 'jpeg'])])
     image_1 = FileField('Image 2', validators=[
@@ -25,3 +26,14 @@ class Products(FlaskForm):
                         FileRequired(), FileAllowed(['png', 'gif', 'jpg', 'jpeg'])])
 
 
+class MerchantSignup(FlaskForm):
+    fullname = StringField('Name', validators=[DataRequired()])
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField("Password",validators=[DataRequired()])
+    reenter = PasswordField("Password",validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+class MerchantLogin(FlaskForm):
+    fullname = StringField('Name', validators=[DataRequired()])
+    password = PasswordField("Password",validators=[DataRequired()])
+    submit = SubmitField('Submit')
