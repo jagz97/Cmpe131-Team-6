@@ -13,7 +13,7 @@
 
     {% if user %}
     <h1>
-        Edit password
+        Edit Address
     </h1>
     {% endif %}
 
@@ -22,7 +22,6 @@
     <p>
             {{ form.full_name.label }}<br>
             {{ form.full_name(size=32) }}
-            {{ form.full_name(value=user.full_name) }}
         </p>
         <p>
             {{ form.address_line_one.label }}<br>

@@ -163,18 +163,18 @@ def editusername():
         user = User.query.get(user_id)
         form = EditUsernameForm(request.form)
         if form.validate_on_submit():
-            try:
-                new_username = form.username.data
+            new_username = form.username.data
+            if User.query.filter(username=new_username).first() != None:
                 user.username = new_username
                 db.session.commit()
                 session['username'] = new_username
                 return redirect(url_for('userprofile'))
-            except Exception:
+            else:
                 flash('The username is taken')
         if 'Cancel' in request.form:
-            return redirect(url_for('home'))
+            return redirect(url_for('userprofile'))
     else:
-        return redirect(url_for('home'))
+        return redirect(url_for('userprofile'))
     return render_template('editUsername.html', title='Edit Username', form=form, user=user)
 
 
@@ -185,16 +185,16 @@ def editemail():
         user = User.query.get(user_id)
         form = EditEmailForm(request.form)
         if form.validate_on_submit():
-            try:
-                new_email = form.email.data
+            new_email = form.email.data
+            if User.query.filter(email=new_email).first() != None:
                 user.email = new_email
                 db.session.commit()
                 session['email'] = new_email
                 return redirect(url_for('userprofile'))
-            except Exception:
+            else:
                 flash('Email is already used')
         if 'Cancel' in request.form:
-            return redirect(url_for('home'))
+            return redirect(url_for('userprofile'))
     else:
         return redirect(url_for('home'))
     return render_template('editEmail.html', title='Edit Email', form=form, user=user)
@@ -206,9 +206,9 @@ def editpassword():
         user = User.query.get(user_id)
         form = EditPasswordForm(request.form)
         if form.validate_on_submit():
-            current_password = form.current_password
-            confirm_current_password = form.confirm_current_password
-            new_password = form.new_password
+            current_password = form.current_password.data
+            confirm_current_password = form.confirm_current_password.data
+            new_password = form.new_password.data
             current_password_hash = generate_password_hash(current_password, method='pbkdf2:sha256')
             new_password_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
             if current_password == confirm_current_password:
@@ -220,6 +220,8 @@ def editpassword():
                     flash('The password is incorrect')
             else:
                 flash('The two passwords do not match')
+        if 'Cancel' in request.form:
+            return redirect(url_for('userprofile'))
     else:
         return redirect(url_for('home'))
     return render_template('editPassword.html', title='Edit Password', form=form, user=user)
@@ -242,7 +244,7 @@ def editaddress():
             db.session.commit()
             return redirect(url_for('userprofile'))
         if 'Cancel' in request.form:
-            return redirect(url_for('home'))
+            return redirect(url_for('userprofile'))
     else:
         return redirect(url_for('home'))
     return render_template('editAddress.html', title='Edit Address', form=form, user=user)

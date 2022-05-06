@@ -14,7 +14,7 @@
     {% if user %}
 
     <h1>
-        {{ user.username }}
+        User: {{ user.username }}
     </h1>
     {% endif %}
 
@@ -23,98 +23,36 @@
     </form>
 
     {% if user %}
-    <div>
-        {{ user.email }}
-    </div>
+    <h4>
+        Current Email: {{ user.email }}
+    </h4>>
     {% endif %}
 
     <form action ="" method="post" novalidate>
         <input type="submit" name="Edit Email" value="Edit Email">
     </form>
 
-    {% if edit_email_form %}
-        <form action="" method="post" novalidate>
-            {{ form.hidden_tag() }}
-        <p>
-            {{ form.email.label }}<br>
-            {{ form.email(size=32) }}
-        </p>
-        <p>{{ form.submit() }}</p>
-        </form>
-    {% endif %}
-
     <form action ="" method="post" novalidate>
         <input type="submit" name="Edit Password" value="Edit Password">
     </form>
 
-    {% if edit_passowrd_form %}
-        <form action="" method="post" novalidate>
-            {{ form.hidden_tag() }}
-        <p>
-            {{ form.current_password.label }}<br>
-            {{ form.current_password(size=32) }}
-        </p>
-        <p>
-            {{ form.confirm_current_password.label }}<br>
-            {{ form.confirm_current_password(size=32) }}
-        </p>
-        <p>
-            {{ form.new_password.label }}<br>
-            {{ form.new_password(size=32) }}
-        </p>
-        <p>{{ form.submit() }}</p>
-        </form>
-    {% endif %}
-
     {% if user %}
+    <h4>
+        Address
+    </h4>>
     <ul>
-        <li>{{ user.full_name }}</li>
-        <li>{{ user.address_line_one }}</li>
-        <li>{{ user.address_line_two }}</li>>
-        <li>{{ user.city }}</li>>
-        <li>{{ user.state_province_region }}</li>>
-        <li>{{ user.zip_postal_code }}</li>
-        <li>{{ user.country }}</li>
+        <li>Full name: {{ user.full_name }}</li>
+        <li>Address Line One: {{ user.address_line_one }}</li>
+        <li>Address Line Two: {{ user.address_line_two }}</li>>
+        <li>City: {{ user.city }}</li>>
+        <li>State/Province/Region = {{ user.state_province_region }}</li>>
+        <li>Zip/Postal Code:{{ user.zip_postal_code }}</li>
+        <li>Country: {{ user.country }}</li>
     </ul>
     {% endif %}
 
     <form action ="" method="post" novalidate>
         <input type="submit" name="Edit Address" value="Edit Address">
     </form>
-    {% if edit_address_form %}
-        <form action="" method="post" novalidate>
-            {{ form.hidden_tag() }}
-        <p>
-            {{ form.full_name.data }}<br>
-            {{ form.full_name(size=32) }}
-        </p>
-        <p>
-            {{ form.address_line_one.data }}<br>
-            {{ form.address_line_one(size=256) }}
-        </p>
-        <p>
-            {{ form.address_line_two.data }}<br>
-            {{ form.address_line_two(size=256) }}
-        </p>
-        <p>
-            {{ form.city.data }}<br>
-            {{ form.city(size=128) }}
-        </p>
-        <p>
-            {{ form.state_province_region.data }}<br>
-            {{ form.state_province_region(size=128) }}
-        </p>
-        <p>
-            {{ form.zip_postal_code.data }}<br>
-            {{ form.zip_postal_code(size=32) }}
-        </p>
-        <p>
-            {{ form.country.data }}<br>
-            {{ form.country(size=64) }}
-        </p>
-        <p>{{ form.submit() }}</p>
-        </form>
-    {% endif %}
-
 
 {% endblock content %}
