@@ -249,25 +249,25 @@ def review():
             username = session['username']
             reviewExists = False
             # get the old review object if it exists
-            review = Review.query.filter(Review.username == username).first()
+            review = Review.query.filter(Review.username == username and Review.product_id == product_id).first()
             if review != None:
                 reviewExists = True
             rating = form.rating.data
             reviewdata = form.review.data
-            ## if there is no review, then add a review
-            if not reviewExists:
+            # if there is a review, update the review
+            if reviewExists:
+                review.rating = rating
+                review.review = reviewdata
+                flash(f'Your review has been updated!')
+            # otherwise, add a review
+            else:
                 newreview = Review(username=username, rating=rating, review=reviewdata, product_id=product_id)
                 db.session.add(newreview)
                 db.session.commit()
-                flash(f'Your review has been added')
-            # else update the old review
-            #else:
-                #review.review =
+                flash(f'Your review has been added!')
             url = '/product/' + product_id
             session.pop('product_id', None)
-            return redirect(url_for(url))
-        else: # the product or the user is not in session, so the page is rerouted to the home page
-            return redirect(url_for(''))
+            return redirect(url)
     else:
         return redirect(url_for('home'))
     return render_template('items/productReview.html', title='Product Review', form=form)

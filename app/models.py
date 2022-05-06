@@ -17,6 +17,8 @@ class AddProduct(db.Model):
     pub_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     username = db.Column(db.String(32), nullable=False)
 
+    reviews = db.relationship(
+        'Review', backref=db.backref('product', lazy=True))
 
     category_id = db.Column(db.Integer, db.ForeignKey(
         'category.id'), nullable=False)
@@ -63,7 +65,7 @@ class Review(db.Model):
     username = db.Column(db.String(30), index=True, nullable=False)
     rating = db.Column(db.Integer, nullable=false)
     review = db.Column(db.String(8000))
-    #product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
 
 class Merchant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
