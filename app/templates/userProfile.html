@@ -2,12 +2,19 @@
 
 {% block content %}
 
-<h1>{{ product.name }}</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
 
     {% if user %}
-    <div>
-        {{ user.username}}
-    </div>
+    <h1>
+        {{ user.username }}
+    </h1>
     {% endif %}
 
     <form>
@@ -27,7 +34,7 @@
 
     {% if user %}
     <div>
-        {{ user.email}}
+        {{ user.email }}
     </div>
     {% endif %}
 
@@ -71,13 +78,13 @@
 
     {% if user %}
     <ul>
-        <li>{{ user.full_name}}</li>
-        <li>{{ user.address_line_one}}</li>
-        <li>{{ user.address_line_two}}</li>>
-        <li>{{ user.city}}</li>>
-        <li>{{ user.state_province_region}}</li>>
-        <li>{{ user.zip_postal_code}}</li>
-        <li>{{ user.country}}</li>
+        <li>{{ user.full_name }}</li>
+        <li>{{ user.address_line_one }}</li>
+        <li>{{ user.address_line_two }}</li>>
+        <li>{{ user.city }}</li>>
+        <li>{{ user.state_province_region }}</li>>
+        <li>{{ user.zip_postal_code }}</li>
+        <li>{{ user.country }}</li>
     </ul>
     {% endif %}
 

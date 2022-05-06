@@ -62,7 +62,7 @@ def addproduct():
         image_2 = photos.save(request.files['photo2'])
 
         addprod = AddProduct(name=name, price=price, category_id=category, brand_id=brand, discount=discount,
-                             description=description, reviews=None, availablestock=availablestock,
+                             description=description, availablestock=availablestock,
                              image=image, image_1=image_1, image_2=image_2)
 
         db.session.add(addprod)
@@ -76,9 +76,6 @@ def addproduct():
 
 @app.route('/signUp', methods=['GET', 'POST'])
 def signup():
-    session.pop('id', None)
-    session.pop('username', None)
-    session.pop('email', None)
     form = SignUpForm(request.form)
     if request.method == "POST":
         username = form.username.data
@@ -97,13 +94,12 @@ def signup():
                        city=city, state_province_region=state_province_region, zip_postal_code=zip_postal_code,
                        country=country)
         db.session.add(newuser)
-        user = User.query.filter_by(username=username).first()
-        session['id'] = user.id
+        session['id'] = User.query.filter(User.username==username).first().id
         session['username'] = username
         session['email'] = email
         db.session.commit()
         flash('Account created for user {}'.format(form.username.data))
-        return redirect(url_for(''))
+        return redirect(url_for('home'))
     return render_template('signUp.html', title='Sign Up', form=form)
 
 
@@ -112,10 +108,10 @@ def productpage(product_id):
     product = AddProduct.query.get(product_id)
     if request.form['Rate Product'] == 'Rate Product':
         session['product_id'] = product_id
-        if 'username' in session:# if user is logged in, rSoute to review page, otherwise, route to login page
-            return redirect(url_for('/product/review'))
+        if 'username' in session:# if user is logged in, route to review page, otherwise, route to login page
+            return redirect(url_for('review'))
         session.pop('product_id', None)
-        return redirect(url_for('/login'))
+        return redirect(url_for('login'))
     return render_template('items/productDetails.html', title='Product Details', product=product)
 
 
@@ -159,58 +155,71 @@ def review():
                 return redirect(url_for(''))
     return render_template('items/productReview.html', title='Product Review', form=form)
 
-@app.route('/user/profile', methods=['GET', 'POST'])
-def userprofile():
-    if 'username' in session:
+@app.route('/user/profile/username', methods=['GET', 'POST'])
+def editusername():
+    if 'id' in session and session['id'] != None:
         user_id = session['id']
         user = User.query.get(user_id)
-        if request.form['Edit Username'] == 'Edit Username':
-            edit_username_form = EditUsernameForm(request.form)
-            if edit_username_form.validate_on_submit():
-                new_username = edit_username_form.username
-                user.update(dict(username=new_username))
-        if request.form[''] == 'Edit Email':
-            edit_email_form = EditEmailForm(request.form)
-            if edit_email_form.validate_on_submit():
-                new_email = edit_email_form.email
-                user.update(dict(email=new_email))
-        if request.form['Edit Password'] == 'Edit Password':
-            edit_password_form = EditPasswordForm(request.form)
-            if edit_password_form.validate_on_submit():
-                current_password = edit_password_form.current_password
-                confirm_current_password = edit_password_form.confirm_current_password
-                new_password = edit_password_form.new_password
-                current_password_hash = generate_password_hash(current_password, method='pbkdf2:sha256')
-                confirm_current_password_hash = generate_password_hash(confirm_current_password, method='pbkdf2:sha256')
-                new_password_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
-                if current_password == confirm_current_password:
-                    if (user.password_hash == current_password_hash):
-                        user.update(dict(password_hash=new_password_hash))
-                    else:
-                        flash('The password is incorrect')
-                else:
-                    flash('The two passwords do not match')
-        if request.form['Edit Address'] == 'Edit Address':
-            edit_address_form = AddressForm
-            if edit_address_form.validate_on_submit():
-                full_name = edit_address_form.full_name
-                address_line_one = edit_address_form.address_line_one
-                address_line_two = edit_address_form.address_line_two
-                city = edit_address_form.city
-                state_province_region = edit_address_form.state_province_region
-                zip_postal_code = edit_address_form.zip_postal_code
-                country = edit_address_form.country
-                if address_line_two == None:
-                    user.update(dict(full_name=full_name, address_line_one=address_line_one, city=city,
-                                     state_province_region=state_province_region, zip_postal_code=zip_postal_code,
-                                     country=country))
-                else:
-                    user.update(dict(full_name=full_name, address_line_one=address_line_one,
-                                     address_line_two=address_line_two, city=city,
-                                     state_province_region=state_province_region,
-                                     zip_postal_code=zip_postal_code, country=country))
+        form = EditUsernameForm(request.form)
+        if form.validate_on_submit():
+            new_username = form.username
+            user.update(dict(username=new_username))
+            session['username'] = new_username
+            return redirect(url_for('userprofile'))
     else:
-        return redirect(url_for('/login'))
-    return render_template('userProfile.html', title='User Profile', edit_username_form=edit_username_form,
-                           edit_email_form=edit_email_form, edit_password_form=edit_password_form,
-                           edit_address_form=edit_address_form, user=user)
+        return redirect(url_for('home'))
+    return render_template('editUsername.html', title='Edit Username', form=form, user=user)
+
+@app.route('/user/profile', methods=['GET', 'POST'])
+def userprofile():
+    if 'id' in session and session['id'] != None:
+        user_id = session['id']
+        user = User.query.get(user_id)
+        if request.method == "POST":
+            if request.form['Edit Username'] == 'Edit Username':
+                return redirect(url_for('editusername'))
+        #if request.form[''] == 'Edit Email':
+        #    edit_email_form = EditEmailForm(request.form)
+        #    if edit_email_form.validate_on_submit():
+        #        new_email = edit_email_form.email
+        #        user.update(dict(email=new_email))
+        #if request.form['Edit Password'] == 'Edit Password':
+        #    edit_password_form = EditPasswordForm(request.form)
+        #    if edit_password_form.validate_on_submit():
+        #        current_password = edit_password_form.current_password
+        #        confirm_current_password = edit_password_form.confirm_current_password
+        #        new_password = edit_password_form.new_password
+        #        current_password_hash = generate_password_hash(current_password, method='pbkdf2:sha256')
+        #        confirm_current_password_hash = generate_password_hash(confirm_current_password, method='pbkdf2:sha256')
+        #        new_password_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
+        #        if current_password == confirm_current_password:
+        #            if (user.password_hash == current_password_hash):
+        #                user.update(dict(password_hash=new_password_hash))
+        #            else:
+        #                flash('The password is incorrect')
+        #        else:
+        #            flash('The two passwords do not match')
+        #if request.form['Edit Address'] == 'Edit Address':
+        #    edit_address_form = AddressForm
+        #    if edit_address_form.validate_on_submit():
+        #        full_name = edit_address_form.full_name
+        #        address_line_one = edit_address_form.address_line_one
+        #        address_line_two = edit_address_form.address_line_two
+        #        city = edit_address_form.city
+        #        state_province_region = edit_address_form.state_province_region
+        #        zip_postal_code = edit_address_form.zip_postal_code
+        #        country = edit_address_form.country
+        #        if address_line_two == None:
+        #            user.update(dict(full_name=full_name, address_line_one=address_line_one, city=city,
+        #                             state_province_region=state_province_region, zip_postal_code=zip_postal_code,
+        #                             country=country))
+        #        else:
+        #            user.update(dict(full_name=full_name, address_line_one=address_line_one,
+        #                             address_line_two=address_line_two, city=city,
+        #                             state_province_region=state_province_region,
+        #                             zip_postal_code=zip_postal_code, country=country))
+    else:
+        return redirect(url_for('home'))
+    return render_template('userProfile.html', title='User Profile', user=user, edit_username_form=edit_username_form)
+#                           edit_email_form=edit_email_form, edit_password_form=edit_password_form,
+#                           edit_address_form=edit_address_form,
