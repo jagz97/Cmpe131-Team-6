@@ -164,7 +164,7 @@ def editusername():
         form = EditUsernameForm(request.form)
         if form.validate_on_submit():
             new_username = form.username.data
-            if User.query.filter(username=new_username).first() != None:
+            if User.query.filter(User.username==new_username).first() != None:
                 user.username = new_username
                 db.session.commit()
                 session['username'] = new_username
@@ -186,7 +186,7 @@ def editemail():
         form = EditEmailForm(request.form)
         if form.validate_on_submit():
             new_email = form.email.data
-            if User.query.filter(email=new_email).first() != None:
+            if User.query.filter(User.email==new_email).first() != None:
                 user.email = new_email
                 db.session.commit()
                 session['email'] = new_email

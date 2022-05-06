@@ -25,7 +25,7 @@
     {% if user %}
     <h4>
         Current Email: {{ user.email }}
-    </h4>>
+    </h4>
     {% endif %}
 
     <form action ="" method="post" novalidate>
@@ -39,13 +39,13 @@
     {% if user %}
     <h4>
         Address
-    </h4>>
+    </h4>
     <ul>
         <li>Full name: {{ user.full_name }}</li>
         <li>Address Line One: {{ user.address_line_one }}</li>
-        <li>Address Line Two: {{ user.address_line_two }}</li>>
-        <li>City: {{ user.city }}</li>>
-        <li>State/Province/Region = {{ user.state_province_region }}</li>>
+        <li>Address Line Two: {{ user.address_line_two }}</li>
+        <li>City: {{ user.city }}</li>
+        <li>State/Province/Region = {{ user.state_province_region }}</li>
         <li>Zip/Postal Code:{{ user.zip_postal_code }}</li>
         <li>Country: {{ user.country }}</li>
     </ul>
