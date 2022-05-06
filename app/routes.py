@@ -24,7 +24,6 @@ def addbrand():
         flash(f'The brand {getbrand} has been added', 'success')
         db.session.commit()
         return redirect(url_for('addproduct'))
-
     return render_template('items/brand.html', brand='brand')
 
 
@@ -63,7 +62,8 @@ def addproduct():
         image_2 = photos.save(request.files['photo2'])
 
         addprod = AddProduct(name=name, price=price, category_id=category, brand_id=brand, discount=discount,
-                             description=description, availablestock=availablestock, image=image, image_1=image_1, image_2=image_2)
+                             description=description, reviews=None, availablestock=availablestock,
+                             image=image, image_1=image_1, image_2=image_2)
 
         db.session.add(addprod)
         # if form is successfully submitted show success message

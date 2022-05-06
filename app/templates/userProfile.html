@@ -54,15 +54,15 @@
         <form action="" method="post" novalidate>
             {{ form.hidden_tag() }}
         <p>
-            {{ form.current_password }}<br>
+            {{ form.current_password.label }}<br>
             {{ form.current_password(size=32) }}
         </p>
         <p>
-            {{ form.confirm_current_password }}<br>
+            {{ form.confirm_current_password.label }}<br>
             {{ form.confirm_current_password(size=32) }}
         </p>
         <p>
-            {{ form.new_password }}<br>
+            {{ form.new_password.label }}<br>
             {{ form.new_password(size=32) }}
         </p>
         <p>{{ form.submit() }}</p>
@@ -88,31 +88,31 @@
         <form action="" method="post" novalidate>
             {{ form.hidden_tag() }}
         <p>
-            {{ form.full_name }}<br>
+            {{ form.full_name.data }}<br>
             {{ form.full_name(size=32) }}
         </p>
         <p>
-            {{ form.address_line_one }}<br>
+            {{ form.address_line_one.data }}<br>
             {{ form.address_line_one(size=256) }}
         </p>
         <p>
-            {{ form.address_line_two }}<br>
+            {{ form.address_line_two.data }}<br>
             {{ form.address_line_two(size=256) }}
         </p>
         <p>
-            {{ form.city }}<br>
+            {{ form.city.data }}<br>
             {{ form.city(size=128) }}
         </p>
         <p>
-            {{ form.state_province_region }}<br>
+            {{ form.state_province_region.data }}<br>
             {{ form.state_province_region(size=128) }}
         </p>
         <p>
-            {{ form.zip_postal_code }}<br>
+            {{ form.zip_postal_code.data }}<br>
             {{ form.zip_postal_code(size=32) }}
         </p>
         <p>
-            {{ form.country }}<br>
+            {{ form.country.data }}<br>
             {{ form.country(size=64) }}
         </p>
         <p>{{ form.submit() }}</p>
