@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
 
+
+<h1>Are you a seller</h1>
+<a href="{{ url_for('signup_merchant') }} ">Sign Up/Login Here</a>
+
 {% with messages = get_flashed_messages() %}
 {% if messages %}
 
@@ -9,6 +13,7 @@
 {% endfor %}
 {% endif %}
 {% endwith %}
+
 <div>
     <div class="row">
         {% for product in products %}
