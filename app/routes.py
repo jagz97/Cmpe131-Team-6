@@ -1,6 +1,6 @@
 from app import app as app
 from app import db, photos, search
-from flask import render_template, redirect, url_for, request, flash, session
+from flask import render_template, redirect, url_for, request, flash, request, session, current_app
 from app.forms import Products, SearchForm, MerchantSignup, MerchantLogin
 from app.models import Brand, Category, AddProduct, Merchant
 from flask_wtf import FlaskForm
@@ -144,8 +144,46 @@ def login_merchant():
         return redirect(url_for('addproduct') )
     return render_template('merchantlogin.html', form = form)
 
+  
 @app.route('/merchantlogout')
 def logut_merchant():
     session.clear()
     flash('You have been logged out.Login again?')
     return redirect(url_for('login_merchant'))
+
+  
+@app.route('/addcart', methods=['POST','GET'])
+def AddCart():
+    try:
+        product_id = request.form.get('product_id')
+        product = AddProduct.query.filter_by(id=product_id).first()
+        if product_id and request.method == "POST":
+            ditems = {product_id:{'name':product.name,'price':product.price,'discount':product.discount,'image':product.image}}
+        if 'Cart' in session:
+            print(session['Cart'])
+            if product_id in session['Cart']:
+               flash("Item already in cart")
+            else:
+                session['Cart']= Merge(session['Cart'],ditems)
+                return redirect(request.referrer)
+        else:
+            session['Cart']= ditems
+            return redirect(request.referrer)   
+    except Exception as e:
+        flash("Failed, Please try again")
+    finally:
+        return redirect(request.referrer)
+
+def Merge(dict1,dict2):
+    if isinstance(dict1, list) and isinstance(dict2, list):
+        return dict1 + dict2
+    elif isinstance(dict1, dict) and isinstance(dict2, dict):
+        return dict(list(dict1.items()) + list(dict2.items()))
+    return False
+        return redirect(url_for('addproduct'))
+
+    return render_template('items/product.html', title='title', form=form, brands=brands, categories=categories)
+
+
+
+
