@@ -1,46 +1,29 @@
 {% extends 'base.html' %}
 {% block content %}
-
-
-<h1>Are you a seller</h1>
-<a href="{{ url_for('signup_merchant') }} ">Sign Up/Login Here</a>
-
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-
-{% for message in messages %}
-<li>{{ message }}</li>
-{% endfor %}
-{% endif %}
-{% endwith %}
-
 <div>
     <div class="row">
-        {% for product in products %}
+
+      {% for product in products %}
+
+
+
         <div class="col-sm-3 mt-2">
             <div class="card">
-
                 <img src="{{url_for('static', filename='img/' + product.image_1)}}" alt="{{product.name}}"
                     class="card-img-top" height="300">
                 <p class="card-body">
                     {% if product.discount > 0 %}
                 <p>{{ product.discount }}% Off</p>
                 {% endif %}
+
                 <p class="text-center">{{product.name}}</p>
                 <p clas="text-center">Price ${{product.price}}</p>
                 </p>
                 <div class="card-footer">
-                    <a href="#" class=" float-left btn btn-sm " float-left>details</a>
-                    <form action="{{url_for('AddCart')}}" method="post">
-                        <input type="hidden" name="product_id" value="{{product.id}}">
-
-                        <button type="submit" class="btn btn-sm" btn-warning float-right> Add to Cart</button>
-
-
-                    </form>
-
-
+                    <a href="#" class=" float-left btn btn-sm ">details</a>
+                    <a href="#" class="float-right btn btn-sm ">Add to Cart</a>
                 </div>
+
 
             </div>
         </div>

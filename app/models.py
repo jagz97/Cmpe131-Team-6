@@ -6,6 +6,7 @@ from datetime import datetime
 
 
 class AddProduct(db.Model):
+    __searchable__= ['name','description']
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(1000), nullable=False)
@@ -14,7 +15,8 @@ class AddProduct(db.Model):
     price = db.Column(db.Numeric(10, 2), nullable=False)
     availablestock = db.Column(db.Integer, nullable=False)
     pub_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    #reviews = db.relationship('Review', backref=db.backref('product', lazy=True))
+    username = db.Column(db.String(32), nullable=False)
+
 
     category_id = db.Column(db.Integer, db.ForeignKey(
         'category.id'), nullable=False)
@@ -63,5 +65,13 @@ class Review(db.Model):
     review = db.Column(db.String(8000))
     #product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
 
+class Merchant(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    fullname = db.Column(db.String(32), nullable=False)
+    username = db.Column(db.String(32), unique=True, nullable=False)
+    password =db.Column(db.String(250), nullable=False)
+
+    def __repr__(self):
+         return '<Name %r>' % self.name
 
 db.create_all()

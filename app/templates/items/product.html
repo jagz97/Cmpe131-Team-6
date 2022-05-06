@@ -12,8 +12,9 @@
     {% endif %}
     {% endwith %}
     <h1>ADD Product</h1>
+    <a href="{{ url_for('logut_merchant')}} ">logut</a>
     <form enctype=multipart/form-data action="{{ url_for('addproduct') }}" method="POST">
-
+        {{form.hidden_tag()}}
         <p>
             {{ form.name.label }}
             {{ form.name(size=32) }}
@@ -71,18 +72,47 @@
             <a href="{{ url_for('addbrand') }}" class="link-primary">Add Brand</a>
 
         </p>
+        {{ form.image }}
+        {{ form.image_1 }}
+        {{ form.image_2 }}
 
 
         <p>
-            <input type=file name=photo>
-            <input type=file name=photo1>
-            <input type=file name=photo2>
+
         </p>
 
         <p>
             {{ form.submit() }}
         </p>
     </form>
+</div>
+
+
+<div>
+    <div class="row">
+        {% for row in rows %}
+        <div class="col-sm-3 mt-2">
+            <div class="card">
+
+                <img src="{{url_for('static', filename='img/' + row.image_1)}}" alt="{{row.name}}"
+                    class="card-img-top" height="300">
+                <p class="card-body">
+                    {% if row.discount > 0 %}
+                <p>{{ row.discount }}% Off</p>
+                {% endif %}
+                <p class="text-center">{{row.name}}</p>
+                <p clas="text-center">Price ${{row.price}}</p>
+                </p>
+                <div class="card-footer">
+                    <p>
+                        {{ row.availablestock }} items left in stock
+                    </p>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 
 {% endblock %}

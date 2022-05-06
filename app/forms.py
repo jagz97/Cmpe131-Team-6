@@ -4,8 +4,11 @@ from flask_wtf.file import FileAllowed, FileField, FileRequired
 from wtforms import Form, SubmitField, StringField, IntegerField, TextAreaField, SelectField, PasswordField, BooleanField
 from wtforms.validators import DataRequired
 
+class SearchForm(FlaskForm):
+    search = StringField('Search', validators=[DataRequired()])
+    submit = SubmitField('Submit')
 
-class Products(Form):
+class Products(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired()])
     discount = IntegerField('Discount')
@@ -16,7 +19,7 @@ class Products(Form):
 
 
     image = FileField('Image 1', validators=[
-                      FileRequired(), FileAllowed(['png', 'gif', 'jpg', 'jpeg'])])
+        FileRequired(), FileAllowed(['png', 'gif', 'jpg', 'jpeg'])])
     image_1 = FileField('Image 2', validators=[
                         FileRequired(), FileAllowed(['png', 'gif', 'jpg', 'jpeg'])])
     image_2 = FileField('Image 3', validators=[
@@ -75,3 +78,15 @@ class EditPasswordForm(FlaskForm):
     confirm_current_password = PasswordField('Confirm Current Password', validators=[DataRequired()])
     new_password = PasswordField('New Password', validators=[DataRequired()])
     submit = SubmitField('Edit Password')
+
+class MerchantSignup(FlaskForm):
+    fullname = StringField('Name', validators=[DataRequired()])
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField("Password",validators=[DataRequired()])
+    reenter = PasswordField("Password",validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+class MerchantLogin(FlaskForm):
+    fullname = StringField('Name', validators=[DataRequired()])
+    password = PasswordField("Password",validators=[DataRequired()])
+    submit = SubmitField('Submit')
