@@ -186,7 +186,7 @@ def Merge(dict1,dict2):
 
 @app.route('/signUp', methods=['GET', 'POST'])
 def signup():
-    if 'id' not in session or session['id'] == None:
+    if not current_user.is_authenticated:
         form = SignUpForm(request.form)
         if form.validate_on_submit():
             username = form.username.data
@@ -221,46 +221,41 @@ def signup():
 def productpage(product_id):
     product = AddProduct.query.get(product_id)
     if 'Rate Product' in request.form:
-        session['product_id'] = product_id
-        if 'id' in session:# if user is logged in, route to review page, otherwise, route to login page
-            return redirect(url_for('review'))
-        session.pop('product_id', None)
+        if current_user.is_authenticated:# if user is logged in, route to review page, otherwise, route to login page
+            return redirect(url_for('review'), product_id=product_id)
         return redirect(url_for('home'))
     return render_template('items/productDetails.html', title='Product Details', product=product)
 
 
-@app.route('/product/review', methods=['GET', 'POST'])
+@app.route('/product/review/<product_id>', methods=['GET', 'POST'])
 def review():
-    if 'id' in session and session['id'] != None and 'product_id' in session and session['product_id'] != None:
+    if current_user.is_authenticated:
         # if the cancel button is pressed, then route to the product page
         form = ReviewForm(request.form)
         if 'Cancel Review' in request.form:
-            product_id = session['product_id']
-            session.pop('product_id', None)
-            return redirect(url_for(productpage, product_id))
+            product_id = request.args.get('product_id')
+            return redirect(url_for(productpage, product_id=product_id))
             # if a user is logged in and has selected a product to review, then the review is added
         if form.validate_on_submit():
-            product_id = session['product_id']
-            username = session['username']
+            product_id = request.args.get('product_id')
+            user = current_user
             reviewExists = False
             # get the old review object if it exists
-            review = Review.query.filter(Review.username == username).first()
+            review = Review.query.filter(Review.username == user.username and Review.product_id == product_id).first()
             if review != None:
                 reviewExists = True
             rating = form.rating.data
             reviewdata = form.review.data
             ## if there is no review, then add a review
-            if not reviewExists:
-                newreview = Review(username=username, rating=rating, review=reviewdata, product_id=product_id)
+            if reviewExists:
+                review.review = reviewdata
+                review.rating = rating
+            else:
+                newreview = Review(username=user.username, rating=rating, review=reviewdata, product_id=product_id)
                 db.session.add(newreview)
                 db.session.commit()
                 flash(f'Your review has been added')
-            # else update the old review
-            #else:
-                #review.review =
-            url = '/product/' + product_id
-            session.pop('product_id', None)
-            return redirect(url_for(url))
+            return redirect(url_for(productpage, product_id=product_id))
         else: # the product or the user is not in session, so the page is rerouted to the home page
             return redirect(url_for(''))
     else:
