@@ -12,6 +12,7 @@
         {% endwith %}
 
     {% if user %}
+
     <h1>
         {{ user.username }}
     </h1>
@@ -20,17 +21,6 @@
     <form>
         <input type="submit" name="Edit Username" value="Edit Username">
     </form>
-
-    {% if edit_username_form %}
-        <form action="" method="post" novalidate>
-            {{ form.hidden_tag() }}
-        <p>
-            {{ form.username.label }}<br>
-            {{ form.username(size=32) }}
-        </p>
-        <p>{{ form.submit() }}</p>
-        </form>
-    {% endif %}
 
     {% if user %}
     <div>

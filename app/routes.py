@@ -220,6 +220,4 @@ def userprofile():
         #                             zip_postal_code=zip_postal_code, country=country))
     else:
         return redirect(url_for('home'))
-    return render_template('userProfile.html', title='User Profile', user=user, edit_username_form=edit_username_form)
-#                           edit_email_form=edit_email_form, edit_password_form=edit_password_form,
-#                           edit_address_form=edit_address_form,
+    return render_template('userProfile.html', title='User Profile', user=user)
