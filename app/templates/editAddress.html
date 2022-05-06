@@ -21,31 +21,31 @@
         {{ form.hidden_tag() }}
     <p>
             {{ form.full_name.label }}<br>
-            {{ form.full_name(size=32) }}
+            {{ form.full_name(value=user.full_name) }}
         </p>
         <p>
             {{ form.address_line_one.label }}<br>
-            {{ form.address_line_one(size=32) }}
+            {{ form.address_line_one(value=user.address_line_one) }}
         </p>
         <p>
             {{ form.address_line_two.label }}<br>
-            {{ form.address_line_two(size=32) }}
+            {{ form.address_line_two(value=address_line_two) }}
         </p>
         <p>
             {{ form.city.label }}<br>
-            {{ form.city(size=32) }}
+            {{ form.city(value=user.city) }}
         </p>
         <p>
             {{ form.state_province_region.label }}<br>
-            {{ form.state_province_region(size=32) }}
+            {{ form.state_province_region(value=user.state_province_region) }}
         </p>
         <p>
             {{ form.zip_postal_code.label }}<br>
-            {{ form.zip_postal_code(size=32) }}
+            {{ form.zip_postal_code(value=user.zip_postal_code) }}
         </p>
         <p>
             {{ form.country.label }}<br>
-            {{ form.country(size=32) }}
+            {{ form.country(value=user.country) }}
         </p>
         <p>{{ form.submit() }}</p>
     </form>

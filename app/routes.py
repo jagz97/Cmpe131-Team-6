@@ -174,12 +174,12 @@ def editusername():
         form = EditUsernameForm(request.form)
         if form.validate_on_submit():
             new_username = form.username.data
-            if User.query.filter(User.username==new_username).first() != None:
+            try:
                 user.username = new_username
                 db.session.commit()
                 session['username'] = new_username
                 return redirect(url_for('userprofile'))
-            else:
+            except Exception:
                 flash('The username is taken')
         if 'Cancel' in request.form:
             return redirect(url_for('userprofile'))
@@ -196,12 +196,12 @@ def editemail():
         form = EditEmailForm(request.form)
         if form.validate_on_submit():
             new_email = form.email.data
-            if User.query.filter(User.email==new_email).first() != None:
+            try:
                 user.email = new_email
                 db.session.commit()
                 session['email'] = new_email
                 return redirect(url_for('userprofile'))
-            else:
+            except Exception:
                 flash('Email is already used')
         if 'Cancel' in request.form:
             return redirect(url_for('userprofile'))
@@ -219,10 +219,9 @@ def editpassword():
             current_password = form.current_password.data
             confirm_current_password = form.confirm_current_password.data
             new_password = form.new_password.data
-            current_password_hash = generate_password_hash(current_password, method='pbkdf2:sha256')
             new_password_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
             if current_password == confirm_current_password:
-                if (user.password_hash == current_password_hash):
+                if check_password_hash(user.password_hash, current_password):
                     user.password_hash = new_password_hash
                     db.session.commit()
                     return redirect(url_for('userprofile'))

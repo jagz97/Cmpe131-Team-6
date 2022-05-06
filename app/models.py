@@ -47,7 +47,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(32), index=True, nullable=False, unique=True)
     email = db.Column(db.String(32), index=True, nullable=False, unique=True)
-    password_hash = db.Column(db.String(256), nullable=False)
+    password_hash = db.Column(db.String(300), nullable=False)
     full_name = db.Column(db.String(128))
     address_line_one = db.Column(db.String(256))
     address_line_two = db.Column(db.String(256))
