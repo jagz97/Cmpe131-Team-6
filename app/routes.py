@@ -220,24 +220,26 @@ def signup():
 @app.route('/product/<product_id>', methods=['GET', 'POST'])
 def productpage(product_id):
     product = AddProduct.query.get(product_id)
+    reviews = product.reviews
     if 'Rate Product' in request.form:
         if current_user.is_authenticated:# if user is logged in, route to review page, otherwise, route to login page
-            return redirect(url_for('review'), product_id=product_id)
+            return redirect(url_for('review', product_id=product_id))
         return redirect(url_for('home'))
-    return render_template('items/productDetails.html', title='Product Details', product=product)
+    return render_template('items/productDetails.html', title='Product Details', product=product, reviews=reviews)
 
 
 @app.route('/product/review/<product_id>', methods=['GET', 'POST'])
-def review():
+def review(product_id):
+    product = AddProduct.query.get(product_id)
+    if product == None:
+        return redirect(url_for('home'))
     if current_user.is_authenticated:
         # if the cancel button is pressed, then route to the product page
         form = ReviewForm(request.form)
         if 'Cancel Review' in request.form:
-            product_id = request.args.get('product_id')
-            return redirect(url_for(productpage, product_id=product_id))
+            return redirect(url_for('productpage', product_id=product_id))
             # if a user is logged in and has selected a product to review, then the review is added
         if form.validate_on_submit():
-            product_id = request.args.get('product_id')
             user = current_user
             reviewExists = False
             # get the old review object if it exists
@@ -250,17 +252,17 @@ def review():
             if reviewExists:
                 review.review = reviewdata
                 review.rating = rating
+                db.session.commit()
+                flash(f'Your review has been updated')
             else:
                 newreview = Review(username=user.username, rating=rating, review=reviewdata, product_id=product_id)
                 db.session.add(newreview)
                 db.session.commit()
                 flash(f'Your review has been added')
-            return redirect(url_for(productpage, product_id=product_id))
-        else: # the product or the user is not in session, so the page is rerouted to the home page
-            return redirect(url_for(''))
+            return redirect(url_for('productpage', product_id=product_id))
     else:
         return redirect(url_for('home'))
-    return render_template('items/productReview.html', title='Product Review', form=form)
+    return render_template('items/productReview.html', title='Product Review', form=form, product=product)
 
 @app.route('/user/profile/username', methods=['GET', 'POST'])
 def editusername():

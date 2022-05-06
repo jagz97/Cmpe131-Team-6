@@ -42,7 +42,7 @@
                 <p clas="text-center">Price ${{product.price}}</p>
                 </p>
                 <div class="card-footer">
-                    <a href="#" class=" float-left btn btn-sm " float-left>details</a>
+                    <a href="/product/{{product.id}}" class=" float-left btn btn-sm " float-left>details</a>
                     <form action="{{url_for('AddCart')}}" method="post">
                         <input type="hidden" name="product_id" value="{{product.id}}">
 

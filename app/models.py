@@ -19,8 +19,7 @@ class AddProduct(db.Model):
     availablestock = db.Column(db.Integer, nullable=False)
     pub_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     username = db.Column(db.String(32), nullable=False)
-    reviews = db.relationship('Review', backref=db.backref('product', lazy=True))
-
+    reviews = db.relationship('Review', backref=db.backref('add_product', lazy=True))
 
     category_id = db.Column(db.Integer, db.ForeignKey(
         'category.id'), nullable=False)
@@ -74,9 +73,9 @@ class User(UserMixin, db.Model):
 class Review( db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), index=True, nullable=False)
-    rating = db.Column(db.Integer, nullable=false)
-    review = db.Column(db.String(8000))
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
+    rating = db.Column(db.Integer, nullable=False)
+    review = db.Column(db.Text)
+    product_id = db.Column(db.Integer, db.ForeignKey('add_product.id'), nullable=False)
 
 class Merchant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
