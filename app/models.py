@@ -4,6 +4,7 @@ from datetime import datetime
 from flask_login import UserMixin
 from app import login
 from werkzeug.security import generate_password_hash, check_password_hash
+import json
 
 # Source Code: Simple Relations https://flask-sqlalchemy.palletsprojects.com/en/2.x/quickstart/
 
@@ -85,6 +86,35 @@ class Merchant(db.Model):
 
     def __repr__(self):
          return '<Name %r>' % self.name
+
+
+"""
+Jsonify the cart items and dumb the value to store cart
+"""
+class JsonEcodedDict(db.TypeDecorator):
+    impl = db.Text
+    def process_bind_param(self, value, dialect):
+        if value is None:
+            return '{}'
+        else:
+            return json.dumps(value)
+    def process_result_value(self, value, dialect):
+        if value is None:
+            return {}
+        else:
+            return json.loads(value)
+
+class CustomerOrder(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    invoice = db.Column(db.String(20), unique=True, nullable=False)
+    status = db.Column(db.String(20), default='Pending', nullable=False)
+    customer_id = db.Column(db.Integer, unique=False, nullable=False) # unique false since cutomer car have more than one orders
+    date_created = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    orders = db.Column(JsonEcodedDict) 
+
+    def __repr__(self):
+        return'<CustomerOrder %r>' % self.invoice
+
 
 
 @login.user_loader

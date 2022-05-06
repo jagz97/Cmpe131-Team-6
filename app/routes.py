@@ -3,14 +3,14 @@ from app import db, photos, search
 from unicodedata import category
 from flask import render_template, redirect, url_for, request, flash, session, current_app
 from app.forms import Products, LoginForm, SignUpForm, ReviewForm, EditUsernameForm, EditPasswordForm, EditEmailForm, AddressForm, SearchForm, MerchantSignup, MerchantLogin
-from app.models import Brand, Category, AddProduct, User, Review, Merchant
+from app.models import Brand, Category, AddProduct, User, Review, Merchant, CustomerOrder
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import update
 from flask_wtf import FlaskForm
 from wtforms import StringField
 from app.helpers import seller_required
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_login import current_user, login_user, logout_user
+from flask_login import current_user, login_user, logout_user,login_required
 
 @app.route('/')
 def home():
@@ -158,9 +158,10 @@ def logut_merchant():
 def AddCart():
     try:
         product_id = request.form.get('product_id')
+        quantity = request.form.get('quantity')
         product = AddProduct.query.filter_by(id=product_id).first()
-        if product_id and request.method == "POST":
-            ditems = {product_id:{'name':product.name,'price':product.price,'discount':product.discount,'image':product.image}}
+        if product_id and quantity and request.method == "POST":
+            ditems = {product_id:{'name':product.name,'price':product.price,'discount':product.discount,'quantity':quantity,'image':product.image}}
         if 'Cart' in session:
             print(session['Cart'])
             if product_id in session['Cart']:
@@ -183,6 +184,66 @@ def Merge(dict1,dict2):
         return dict(list(dict1.items()) + list(dict2.items()))
     return False
 
+
+@app.route('/cart')
+def getCart():
+    if 'Cart' not in session or len(session['Cart']) <= 0: # check if cart has items
+        return redirect(url_for('home'))
+    subtotal = 0
+    grandtotal = 0
+    for key,product in session['Cart'].items():
+        discount = (product['discount']/100) * float(product['price'])
+        subtotal += float(product['price']) 
+        subtotal -= discount
+        tax =("%.2f" %(.06 * float(subtotal)))
+        grandtotal = float("%.2f" % (1.06 * subtotal))
+    return render_template('cart.html')
+
+
+
+@app.route('/updatecart/<int:code>', methods=['POST'])
+def updatecart(code):
+    if 'Cart' not in session or len(session['Cart']) <= 0:
+        return redirect(url_for('home'))
+    if request.method =="POST":
+        quantity = request.form.get('quantity')
+        color = request.form.get('color')
+        try:
+            session.modified = True
+            for key , item in session['Shoppingcart'].items():
+                if int(key) == code:
+                    item['quantity'] = quantity
+                    item['color'] = color
+                    flash('Item is updated!')
+                    return redirect(url_for('getCart'))
+        except Exception as e:
+            print(e)
+            return redirect(url_for('getCart'))
+
+
+
+@app.route('/deleteitem/<int:id>')
+def deleteitem(id):
+    if 'Shoppingcart' not in session or len(session['Shoppingcart']) <= 0:
+        return redirect(url_for('home'))
+    try:
+        session.modified = True
+        for key , item in session['Shoppingcart'].items():
+            if int(key) == id:
+                session['Shoppingcart'].pop(key, None)
+                return redirect(url_for('getCart'))
+    except Exception as e:
+        print(e)
+        return redirect(url_for('getCart'))
+
+
+@app.route('/clearcart')
+def clearcart():
+    try:
+        session.pop('Shoppingcart', None)
+        return redirect(url_for('home'))
+    except Exception as e:
+        print(e)
 
 @app.route('/signUp', methods=['GET', 'POST'])
 def signup():
@@ -413,3 +474,24 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+
+@app.route('/getorder')
+@login_required
+def get_order():
+    if current_user.is_authenticated:
+        customer_id = current_user.id
+        invoice = secrets.token_hex(5)
+        updateshoppingcart
+        try:
+            order = CustomerOrder(invoice=invoice,customer_id=customer_id,orders=session['Cart'])
+            db.session.add(order)
+            db.session.commit()
+            session.pop('Cart')
+            flash('Your order has been sent successfully')
+            return redirect(url_for('orders',invoice=invoice))
+        except Exception as e:
+            print(e)
+            flash('Could not retrieve cart order. Try again')
+            return redirect(url_for('getCart'))
+
+#carts
