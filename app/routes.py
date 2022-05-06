@@ -103,7 +103,7 @@ def signup():
                 db.session.commit()
                 flash('Account created for user {}'.format(form.username.data))
             except Exception:
-                flash('Username is taken')
+                flash('Username or email is taken')
                 session.pop('id', None)
                 session.pop('username', None)
                 session.pop('email', None)
@@ -287,12 +287,13 @@ def deleteaccount():
         user_id = session['id']
         user = User.query.get(user_id)
         if 'Yes' in request.form:
+            username = user.username
             db.session.delete(user)
-            db.session.commit
+            db.session.commit()
             session.pop('id', None)
             session.pop('username', None)
             session.pop('email', None)
-            flash('User {} has been deleted'.format(user.username))
+            flash('User {} has been deleted'.format(username))
             return redirect(url_for('home'))
         if 'No' in request.form:
             return redirect(url_for('userprofile'))
