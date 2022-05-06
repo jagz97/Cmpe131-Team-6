@@ -10,6 +10,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField
 from app.helpers import seller_required
 from werkzeug.security import check_password_hash, generate_password_hash
+from flask_login import current_user, login_user, logout_user
 
 @app.route('/')
 def home():
@@ -205,20 +206,14 @@ def signup():
                                city=city, state_province_region=state_province_region, zip_postal_code=zip_postal_code,
                                country=country)
                 db.session.add(newuser)
-                session['id'] = User.query.filter(User.username==username).first().id
-                session['username'] = username
-                session['email'] = email
                 db.session.commit()
                 flash('Account created for user {}'.format(form.username.data))
             except Exception:
                 flash('Username or email is taken')
-                session.pop('id', None)
-                session.pop('username', None)
-                session.pop('email', None)
                 return redirect(url_for('signup'))
             return redirect(url_for('home'))
     else:
-        return redirect(url_for('home'))
+        return redirect(url_for('login'))
     return render_template('signUp.html', title='Sign Up', form=form)
 
 
@@ -274,16 +269,15 @@ def review():
 
 @app.route('/user/profile/username', methods=['GET', 'POST'])
 def editusername():
-    if 'id' in session and session['id'] != None:
-        user_id = session['id']
-        user = User.query.get(user_id)
+    if current_user.is_authenticated:
+       
+        user = current_user
         form = EditUsernameForm(request.form)
         if form.validate_on_submit():
             new_username = form.username.data
             try:
                 user.username = new_username
                 db.session.commit()
-                session['username'] = new_username
                 return redirect(url_for('userprofile'))
             except Exception:
                 db.session.rollback()
@@ -297,16 +291,14 @@ def editusername():
 
 @app.route('/user/profile/email', methods=['GET', 'POST'])
 def editemail():
-    if 'id' in session and session['id'] != None:
-        user_id = session['id']
-        user = User.query.get(user_id)
+    if current_user.is_authenticated:
+        user = current_user
         form = EditEmailForm(request.form)
         if form.validate_on_submit():
             new_email = form.email.data
             try:
                 user.email = new_email
                 db.session.commit()
-                session['email'] = new_email
                 return redirect(url_for('userprofile'))
             except Exception:
                 db.session.rollback()
@@ -319,9 +311,8 @@ def editemail():
 
 @app.route('/user/profile/password', methods=['GET', 'POST'])
 def editpassword():
-    if 'id' in session and session['id'] != None:
-        user_id = session['id']
-        user = User.query.get(user_id)
+    if current_user.is_authenticated:
+        user = current_user
         form = EditPasswordForm(request.form)
         if form.validate_on_submit():
             current_password = form.current_password.data
@@ -346,9 +337,8 @@ def editpassword():
 
 @app.route('/user/profile/address', methods=['GET', 'POST'])
 def editaddress():
-    if 'id' in session and session['id'] != None:
-        user_id = session['id']
-        user = User.query.get(user_id)
+    if current_user.is_authenticated:
+        user = current_user
         form = AddressForm(request.form)
         if form.validate_on_submit():
             user.full_name = form.full_name.data
@@ -369,9 +359,8 @@ def editaddress():
 
 @app.route('/user/profile', methods=['GET', 'POST'])
 def userprofile():
-    if 'id' in session and session['id'] != None:
-        user_id = session['id']
-        user = User.query.get(user_id)
+    if current_user.is_authenticated:
+        user = current_user
         if 'Edit Username' in request.form:
             return redirect(url_for('editusername'))
         if 'Edit Email' in request.form:
@@ -389,20 +378,38 @@ def userprofile():
 
 @app.route('/user/delete', methods=['GET', 'POST'])
 def deleteaccount():
-    if 'id' in session and session['id'] != None:
-        user_id = session['id']
-        user = User.query.get(user_id)
+    if current_user.is_authenticated:
+        user = current_user
         if 'Yes' in request.form:
             username = user.username
             db.session.delete(user)
             db.session.commit()
-            session.pop('id', None)
-            session.pop('username', None)
-            session.pop('email', None)
             flash('User {} has been deleted'.format(username))
             return redirect(url_for('home'))
         if 'No' in request.form:
-            return redirect(url_for('userprofile'))
+            return redirect(url_for('login'))
     else:
         return redirect(url_for('home'))
     return render_template('deleteAccount.html', title='Delete Account', user=user)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid username or password')
+            return redirect(url_for('login'))
+        login_user(user, remember=form.remember_me.data)
+        return redirect(url_for('home'))
+    return render_template('login.html', title='Sign In', form=form)
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+

@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_uploads import IMAGES, UploadSet, configure_uploads
 from flask_msearch import Search
 from app.helpers import seller_required
+from flask_login import LoginManager
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -27,5 +28,8 @@ configure_uploads(app, photos)
 db = SQLAlchemy(app)
 search = Search()
 search.init_app(app) # initalize search
+
+login = LoginManager(app)
+login.login_view = 'login'
 
 from app import routes

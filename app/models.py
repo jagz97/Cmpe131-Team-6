@@ -1,6 +1,9 @@
 from sqlalchemy import Column, ForeignKey, false
 from app import db
 from datetime import datetime
+from flask_login import UserMixin
+from app import login
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # Source Code: Simple Relations https://flask-sqlalchemy.palletsprojects.com/en/2.x/quickstart/
 
@@ -44,7 +47,7 @@ class Category(db.Model):
     name = db.Column(db.String(30), nullable=False, unique=True)
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(32), index=True, nullable=False, unique=True)
     email = db.Column(db.String(32), index=True, nullable=False, unique=True)
@@ -57,8 +60,17 @@ class User(db.Model):
     zip_postal_code = db.Column(db.String(32))
     country = db.Column(db.String(64))
 
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
 
-class Review(db.Model):
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+    
+    def __repr__(self):
+        return '<User {}>'.format(self.username)
+
+
+class Review( db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), index=True, nullable=False)
     rating = db.Column(db.Integer, nullable=false)
@@ -73,5 +85,10 @@ class Merchant(db.Model):
 
     def __repr__(self):
          return '<Name %r>' % self.name
+
+
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
 
 db.create_all()
