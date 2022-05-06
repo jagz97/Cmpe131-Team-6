@@ -181,9 +181,6 @@ def Merge(dict1,dict2):
     elif isinstance(dict1, dict) and isinstance(dict2, dict):
         return dict(list(dict1.items()) + list(dict2.items()))
     return False
-        return redirect(url_for('addproduct'))
-
-    return render_template('items/product.html', title='title', form=form, brands=brands, categories=categories)
 
 
 @app.route('/signUp', methods=['GET', 'POST'])
