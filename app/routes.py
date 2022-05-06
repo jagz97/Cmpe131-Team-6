@@ -224,7 +224,7 @@ def productpage(product_id):
     if 'Rate Product' in request.form:
         if current_user.is_authenticated:# if user is logged in, route to review page, otherwise, route to login page
             return redirect(url_for('review', product_id=product_id))
-        return redirect(url_for('home'))
+        return redirect(url_for('login'))
     return render_template('items/productDetails.html', title='Product Details', product=product, reviews=reviews)
 
 
@@ -248,20 +248,23 @@ def review(product_id):
                 reviewExists = True
             rating = form.rating.data
             reviewdata = form.review.data
-            ## if there is no review, then add a review
-            if reviewExists:
-                review.review = reviewdata
-                review.rating = rating
-                db.session.commit()
-                flash(f'Your review has been updated')
+            if rating <= 5 and rating >=0:
+                ## if there is no review, then add a review
+                if reviewExists:
+                    review.review = reviewdata
+                    review.rating = rating
+                    db.session.commit()
+                    flash(f'Your review has been updated')
+                else:
+                    newreview = Review(username=user.username, rating=rating, review=reviewdata, product_id=product_id)
+                    db.session.add(newreview)
+                    db.session.commit()
+                    flash(f'Your review has been added')
+                return redirect(url_for('productpage', product_id=product_id))
             else:
-                newreview = Review(username=user.username, rating=rating, review=reviewdata, product_id=product_id)
-                db.session.add(newreview)
-                db.session.commit()
-                flash(f'Your review has been added')
-            return redirect(url_for('productpage', product_id=product_id))
+                flash('Rating must be from 0-5 stars')
     else:
-        return redirect(url_for('home'))
+        return redirect(url_for('login'))
     return render_template('items/productReview.html', title='Product Review', form=form, product=product)
 
 @app.route('/user/profile/username', methods=['GET', 'POST'])
@@ -282,7 +285,7 @@ def editusername():
         if 'Cancel' in request.form:
             return redirect(url_for('userprofile'))
     else:
-        return redirect(url_for('userprofile'))
+        return redirect(url_for('login'))
     return render_template('editUsername.html', title='Edit Username', form=form, user=user)
 
 
@@ -303,7 +306,7 @@ def editemail():
         if 'Cancel' in request.form:
             return redirect(url_for('userprofile'))
     else:
-        return redirect(url_for('home'))
+        return redirect(url_for('login'))
     return render_template('editEmail.html', title='Edit Email', form=form, user=user)
 
 @app.route('/user/profile/password', methods=['GET', 'POST'])
@@ -328,7 +331,7 @@ def editpassword():
         if 'Cancel' in request.form:
             return redirect(url_for('userprofile'))
     else:
-        return redirect(url_for('home'))
+        return redirect(url_for('login'))
     return render_template('editPassword.html', title='Edit Password', form=form, user=user)
 
 
@@ -350,7 +353,7 @@ def editaddress():
         if 'Cancel' in request.form:
             return redirect(url_for('userprofile'))
     else:
-        return redirect(url_for('home'))
+        return redirect(url_for('login'))
     return render_template('editAddress.html', title='Edit Address', form=form, user=user)
 
 
@@ -369,7 +372,7 @@ def userprofile():
         if 'Delete Account' in request.form:
             return redirect(url_for('deleteaccount'))
     else:
-        return redirect(url_for('home'))
+        return redirect(url_for('login'))
     return render_template('userProfile.html', title='User Profile', user=user)
 
 
@@ -386,7 +389,7 @@ def deleteaccount():
         if 'No' in request.form:
             return redirect(url_for('login'))
     else:
-        return redirect(url_for('home'))
+        return redirect(url_for('login'))
     return render_template('deleteAccount.html', title='Delete Account', user=user)
 
 
@@ -401,7 +404,7 @@ def login():
             flash('Invalid username or password')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
-        return redirect(url_for('home'))
+        return redirect(url_for('login'))
     return render_template('login.html', title='Sign In', form=form)
 
 
