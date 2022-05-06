@@ -2,6 +2,15 @@
 
 {% block content %}
 
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+
+{% for message in messages %}
+<li>{{ message }}</li>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
 <h1>{{ product.name }}</h1>
 
 <form action="" method="post" novalidate>
@@ -15,11 +24,7 @@
         </p>
         <p>
             {{ form.review.label }}<br>
-            {{ form.review(size=8000) }}
-        </p>
-        <p>
-            {{ form.password.label }}<br>
-            {{ form.password(size=32) }}
+            {{ form.review(size=500) }}
         </p>
         <p>{{ form.submit() }}</p>
 </form>

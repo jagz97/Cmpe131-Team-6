@@ -46,7 +46,7 @@ New User?
                 <p clas="text-center">Price ${{product.price}}
                 </p>
                 <div class="card-footer">
-                    <a href="#" class=" float-left btn btn-sm btn-primary " float-left>Product details</a>
+                    <a href="/product/{{product.id}}" class=" float-left btn btn-sm btn-primary " float-left>Product details</a>
                     <form action="{{url_for('AddCart')}}" method="post">
                         <input type="hidden" name="product_id" value="{{product.id}}">
                         <input type="number" name ="quantity" id="" value="1" min="1" max="{{product.availablestock}}">
