@@ -1,5 +1,6 @@
 from app import app as app
 from app import db, photos
+from time import sleep
 from unicodedata import category
 from flask import render_template, redirect, url_for, request, flash, session
 from app.forms import Products, LoginForm, SignUpForm, ReviewForm, EditUsernameForm, EditPasswordForm, EditEmailForm, AddressForm
@@ -90,16 +91,24 @@ def signup():
         state_province_region = form.state_province_region.data
         zip_postal_code = form.zip_postal_code.data
         country = form.country.data
-        newuser = User(username=username, email=email, password_hash=password_hash, full_name=full_name,
-                       address_line_one=address_line_one, address_line_two=address_line_two,
-                       city=city, state_province_region=state_province_region, zip_postal_code=zip_postal_code,
-                       country=country)
-        db.session.add(newuser)
-        session['id'] = User.query.filter(User.username==username).first().id
-        session['username'] = username
-        session['email'] = email
-        db.session.commit()
-        flash('Account created for user {}'.format(form.username.data))
+        try:
+            newuser = User(username=username, email=email, password_hash=password_hash, full_name=full_name,
+                           address_line_one=address_line_one, address_line_two=address_line_two,
+                           city=city, state_province_region=state_province_region, zip_postal_code=zip_postal_code,
+                           country=country)
+            db.session.add(newuser)
+            session['id'] = User.query.filter(User.username==username).first().id
+            session['username'] = username
+            session['email'] = email
+            db.session.commit()
+            flash('Account created for user {}'.format(form.username.data))
+            sleep(3)
+        except Exception:
+            flash('Username is taken')
+            session.pop('id', None)
+            session.pop('username', None)
+            session.pop('email', None)
+            return redirect(url_for('signup'))
         return redirect(url_for('home'))
     return render_template('signUp.html', title='Sign Up', form=form)
 
