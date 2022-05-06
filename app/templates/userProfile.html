@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+    {% if user %}
+
+    <h1>
+        User: {{ user.username }}
+    </h1>
+    {% endif %}
+
+    <form action ="" method="post" novalidate>
+        <input type="submit" name="Edit Username" value="Edit Username">
+    </form>
+
+    {% if user %}
+    <h4>
+        Current Email: {{ user.email }}
+    </h4>
+    {% endif %}
+
+    <form action ="" method="post" novalidate>
+        <input type="submit" name="Edit Email" value="Edit Email">
+    </form>
+
+    <form action ="" method="post" novalidate>
+        <input type="submit" name="Edit Password" value="Edit Password">
+    </form>
+
+    {% if user %}
+    <h4>
+        Address
+    </h4>
+    <ul>
+        <li>Full name: {{ user.full_name }}</li>
+        <li>Address Line One: {{ user.address_line_one }}</li>
+        <li>Address Line Two: {{ user.address_line_two }}</li>
+        <li>City: {{ user.city }}</li>
+        <li>State/Province/Region = {{ user.state_province_region }}</li>
+        <li>Zip/Postal Code:{{ user.zip_postal_code }}</li>
+        <li>Country: {{ user.country }}</li>
+    </ul>
+    {% endif %}
+
+    <form action ="" method="post" novalidate>
+        <input type="submit" name="Edit Address" value="Edit Address">
+    </form>
+
+    <form action ="" method="post" novalidate>
+        <input type="submit" name="Delete Account" value="Delete Account">
+    </form>
+
+{% endblock content %}

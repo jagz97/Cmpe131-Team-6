@@ -17,6 +17,7 @@ class AddProduct(db.Model):
     pub_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     username = db.Column(db.String(32), nullable=False)
 
+
     category_id = db.Column(db.Integer, db.ForeignKey(
         'category.id'), nullable=False)
     category = db.relationship(
@@ -42,25 +43,27 @@ class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), nullable=False, unique=True)
 
-class Address(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    full_name = db.Column(db.String(128), nullable=False)
-    address_line_one = db.Column(db.String(256), nullable=False)
-    address_line_two = db.Column(db.Integer)
-    city = db.Column(db.String(128), nullable=False)
-    state_province_region = db.Column(db.String(128), nullable=False)
-    zip_postal_code = db.Column(db.String(32), nullable=False)
-    country = db.Column(db.String(64), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(30), index=True, nullable=False, unique=True)
-    email = db.Column(db.String(30), index =True, nullable=False, unique=True)
-    password_hash = db.Column(db.String(128))
-    shipping_addresses = db.relationship('Address', backref="user", lazy='dynamic')
+    username = db.Column(db.String(32), index=True, nullable=False, unique=True)
+    email = db.Column(db.String(32), index=True, nullable=False, unique=True)
+    password_hash = db.Column(db.String(300), nullable=False)
+    full_name = db.Column(db.String(128))
+    address_line_one = db.Column(db.String(256))
+    address_line_two = db.Column(db.String(256))
+    city = db.Column(db.String(128))
+    state_province_region = db.Column(db.String(128))
+    zip_postal_code = db.Column(db.String(32))
+    country = db.Column(db.String(64))
 
 
+class Review(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(30), index=True, nullable=False)
+    rating = db.Column(db.Integer, nullable=false)
+    review = db.Column(db.String(8000))
+    #product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
 
 class Merchant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -70,8 +73,5 @@ class Merchant(db.Model):
 
     def __repr__(self):
          return '<Name %r>' % self.name
-
-
-
 
 db.create_all()

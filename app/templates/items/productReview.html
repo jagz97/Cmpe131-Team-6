@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>{{ product.name }}</h1>
+
+<form action="" method="post" novalidate>
+    <input type="submit" name="Cancel Review" value="Cancel Review">
+</form>
+<form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.rating.label }}<br>
+            {{ form.rating(size=1) }}
+        </p>
+        <p>
+            {{ form.review.label }}<br>
+            {{ form.review(size=8000) }}
+        </p>
+        <p>
+            {{ form.password.label }}<br>
+            {{ form.password(size=32) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+</form>
+
+
+{% endblock content %}

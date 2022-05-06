@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Sign Up</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.email.label }}<br>
+            {{ form.email(size=32) }}
+        </p>
+        <p>
+            {{ form.username.label }}<br>
+            {{ form.username(size=32) }}
+        </p>
+        <p>
+            {{ form.password.label }}<br>
+            {{ form.password(size=32) }}
+        </p>
+        <p>
+            {{ form.full_name.label }}<br>
+            {{ form.full_name(size=32) }}
+        </p>
+        <p>
+            {{ form.address_line_one.label }}<br>
+            {{ form.address_line_one(size=32) }}
+        </p>
+        <p>
+            {{ form.address_line_two.label }}<br>
+            {{ form.address_line_two(size=32) }}
+        </p>
+        <p>
+            {{ form.city.label }}<br>
+            {{ form.city(size=32) }}
+        </p>
+        <p>
+            {{ form.state_province_region.label }}<br>
+            {{ form.state_province_region(size=32) }}
+        </p>
+        <p>
+            {{ form.zip_postal_code.label }}<br>
+            {{ form.zip_postal_code(size=32) }}
+        </p>
+        <p>
+            {{ form.country.label }}<br>
+            {{ form.country(size=32) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+
+{% endblock content %}

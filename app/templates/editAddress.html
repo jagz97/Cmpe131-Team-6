@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if user %}
+    <h1>
+        Edit Address
+    </h1>
+    {% endif %}
+
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+    <p>
+            {{ form.full_name.label }}<br>
+            {{ form.full_name(value=user.full_name) }}
+        </p>
+        <p>
+            {{ form.address_line_one.label }}<br>
+            {{ form.address_line_one(value=user.address_line_one) }}
+        </p>
+        <p>
+            {{ form.address_line_two.label }}<br>
+            {{ form.address_line_two(value=address_line_two) }}
+        </p>
+        <p>
+            {{ form.city.label }}<br>
+            {{ form.city(value=user.city) }}
+        </p>
+        <p>
+            {{ form.state_province_region.label }}<br>
+            {{ form.state_province_region(value=user.state_province_region) }}
+        </p>
+        <p>
+            {{ form.zip_postal_code.label }}<br>
+            {{ form.zip_postal_code(value=user.zip_postal_code) }}
+        </p>
+        <p>
+            {{ form.country.label }}<br>
+            {{ form.country(value=user.country) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+
+    <form action="" method="post" novalidate>
+    <input type="submit" name="Cancel" value="Cancel">
+    </form>
+
+{% endblock content %}
