@@ -289,6 +289,9 @@ def deleteaccount():
         if 'Yes' in request.form:
             db.session.delete(user)
             db.session.commit
+            session.pop('id', None)
+            session.pop('username', None)
+            session.pop('email', None)
             flash('User {} has been deleted'.format(user.username))
             return redirect(url_for('home'))
         if 'No' in request.form:
