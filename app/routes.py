@@ -1,6 +1,5 @@
 from app import app as app
 from app import db, photos
-from time import sleep
 from unicodedata import category
 from flask import render_template, redirect, url_for, request, flash, session
 from app.forms import Products, LoginForm, SignUpForm, ReviewForm, EditUsernameForm, EditPasswordForm, EditEmailForm, AddressForm
@@ -78,37 +77,39 @@ def addproduct():
 
 @app.route('/signUp', methods=['GET', 'POST'])
 def signup():
-    form = SignUpForm(request.form)
-    if form.validate_on_submit():
-        username = form.username.data
-        email = form.email.data
-        password = form.password.data
-        password_hash = generate_password_hash(password, method='pbkdf2:sha256')
-        full_name = form.full_name.data
-        address_line_one = form.address_line_one.data
-        address_line_two = form.address_line_two.data
-        city = form.city.data
-        state_province_region = form.state_province_region.data
-        zip_postal_code = form.zip_postal_code.data
-        country = form.country.data
-        try:
-            newuser = User(username=username, email=email, password_hash=password_hash, full_name=full_name,
-                           address_line_one=address_line_one, address_line_two=address_line_two,
-                           city=city, state_province_region=state_province_region, zip_postal_code=zip_postal_code,
-                           country=country)
-            db.session.add(newuser)
-            session['id'] = User.query.filter(User.username==username).first().id
-            session['username'] = username
-            session['email'] = email
-            db.session.commit()
-            flash('Account created for user {}'.format(form.username.data))
-            sleep(3)
-        except Exception:
-            flash('Username is taken')
-            session.pop('id', None)
-            session.pop('username', None)
-            session.pop('email', None)
-            return redirect(url_for('signup'))
+    if 'id' not in session or session['id'] == None:
+        form = SignUpForm(request.form)
+        if form.validate_on_submit():
+            username = form.username.data
+            email = form.email.data
+            password = form.password.data
+            password_hash = generate_password_hash(password, method='pbkdf2:sha256')
+            full_name = form.full_name.data
+            address_line_one = form.address_line_one.data
+            address_line_two = form.address_line_two.data
+            city = form.city.data
+            state_province_region = form.state_province_region.data
+            zip_postal_code = form.zip_postal_code.data
+            country = form.country.data
+            try:
+                newuser = User(username=username, email=email, password_hash=password_hash, full_name=full_name,
+                               address_line_one=address_line_one, address_line_two=address_line_two,
+                               city=city, state_province_region=state_province_region, zip_postal_code=zip_postal_code,
+                               country=country)
+                db.session.add(newuser)
+                session['id'] = User.query.filter(User.username==username).first().id
+                session['username'] = username
+                session['email'] = email
+                db.session.commit()
+                flash('Account created for user {}'.format(form.username.data))
+            except Exception:
+                flash('Username is taken')
+                session.pop('id', None)
+                session.pop('username', None)
+                session.pop('email', None)
+                return redirect(url_for('signup'))
+            return redirect(url_for('home'))
+    else:
         return redirect(url_for('home'))
     return render_template('signUp.html', title='Sign Up', form=form)
 
