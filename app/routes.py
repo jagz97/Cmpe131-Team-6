@@ -117,53 +117,51 @@ def signup():
 @app.route('/product/<product_id>', methods=['GET', 'POST'])
 def productpage(product_id):
     product = AddProduct.query.get(product_id)
-    if request.form['Rate Product'] == 'Rate Product':
+    if 'Rate Product' in request.form:
         session['product_id'] = product_id
-        if 'username' in session:# if user is logged in, route to review page, otherwise, route to login page
+        if 'id' in session:# if user is logged in, route to review page, otherwise, route to login page
             return redirect(url_for('review'))
         session.pop('product_id', None)
-        return redirect(url_for('login'))
+        return redirect(url_for('home'))
     return render_template('items/productDetails.html', title='Product Details', product=product)
 
 
 @app.route('/product/review', methods=['GET', 'POST'])
 def review():
-    # if the cancel button is pressed, then route to the product page
-    form = ReviewForm(request.form)
-    if request.form['Cancel Review'] == 'Cancel Review':
-        product_id = db.session['product']
-        url = '/product/' + product_id
-        session.pop('product_id', None)
-        return redirect(url_for(url))
-        # if a user is logged in and has selected a product to review, then the review is added
-    if request.method == "POST":
+    if 'id' in session and session['id'] != None and 'product_id' in session and session['product_id'] != None:
+        # if the cancel button is pressed, then route to the product page
+        form = ReviewForm(request.form)
+        if 'Cancel Review' in request.form:
+            product_id = session['product_id']
+            session.pop('product_id', None)
+            return redirect(url_for(productpage, product_id))
+            # if a user is logged in and has selected a product to review, then the review is added
         if form.validate_on_submit():
-            if 'product_id' in session and 'username' in session:
-                product_id = session['product']
-                username = session['username']
-                reviewExists = False
-                # get the old review object if it exists
-                product = AddProduct.query.get(product_id)
-                #for review in product.reviews:
-                #    if review.username == username:
-                #            reviewExists == True
-                #            review_id = review.id
-                rating = form.rating.data
-                review = form.review.data
-                ## if there is no review, then add a review
-                #if not reviewExists:
-                newreview = Review(username=username, rating=rating, review=review, product_id=product_id)
+            product_id = session['product_id']
+            username = session['username']
+            reviewExists = False
+            # get the old review object if it exists
+            review = Review.query.filter(Review.username == username).first()
+            if review != None:
+                reviewExists = True
+            rating = form.rating.data
+            reviewdata = form.review.data
+            ## if there is no review, then add a review
+            if not reviewExists:
+                newreview = Review(username=username, rating=rating, review=reviewdata, product_id=product_id)
+                db.session.add(newreview)
+                db.session.commit()
                 flash(f'Your review has been added')
-                #    db.session.add(newreview)
-                ## else update the old review
-                #else:
-                #    oldReview = Review.query.get(review_id)
-                #    oldReview.update(dict(rating=rating, review=review))
-                url = '/product/' + product_id
-                session.pop('product_id', None)
-                return redirect(url_for(url))
-            else: # the product or the user is not in session, so the page is rerouted to the home page
-                return redirect(url_for(''))
+            # else update the old review
+            #else:
+                #review.review =
+            url = '/product/' + product_id
+            session.pop('product_id', None)
+            return redirect(url_for(url))
+        else: # the product or the user is not in session, so the page is rerouted to the home page
+            return redirect(url_for(''))
+    else:
+        return redirect(url_for('home'))
     return render_template('items/productReview.html', title='Product Review', form=form)
 
 @app.route('/user/profile/username', methods=['GET', 'POST'])

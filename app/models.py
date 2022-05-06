@@ -14,8 +14,7 @@ class AddProduct(db.Model):
     price = db.Column(db.Numeric(10, 2), nullable=False)
     availablestock = db.Column(db.Integer, nullable=False)
     pub_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    #reviews = db.relationship('Review', backref=db.backref('reviews', lazy=True))
-    #review_id = db.Column(db.Integer, db.ForeignKey('review.id'))
+    #reviews = db.relationship('Review', backref=db.backref('product', lazy=True))
 
     category_id = db.Column(db.Integer, db.ForeignKey(
         'category.id'), nullable=False)
@@ -62,6 +61,7 @@ class Review(db.Model):
     username = db.Column(db.String(30), index=True, nullable=False)
     rating = db.Column(db.Integer, nullable=false)
     review = db.Column(db.String(8000))
+    #product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
 
 
 db.create_all()
