@@ -5,6 +5,7 @@ from flask import render_template, redirect, url_for, request, flash, session
 from app.forms import Products, LoginForm, SignUpForm, ReviewForm, EditUsernameForm, EditPasswordForm, EditEmailForm, AddressForm
 from app.models import Brand, Category, AddProduct, User, Review
 from werkzeug.security import check_password_hash, generate_password_hash
+from sqlalchemy import update
 from flask_wtf import FlaskForm
 from wtforms import StringField
 
@@ -77,7 +78,7 @@ def addproduct():
 @app.route('/signUp', methods=['GET', 'POST'])
 def signup():
     form = SignUpForm(request.form)
-    if request.method == "POST":
+    if form.validate_on_submit():
         username = form.username.data
         email = form.email.data
         password = form.password.data
@@ -162,62 +163,103 @@ def editusername():
         user = User.query.get(user_id)
         form = EditUsernameForm(request.form)
         if form.validate_on_submit():
-            new_username = form.username
-            user.update(dict(username=new_username))
-            session['username'] = new_username
-            return redirect(url_for('userprofile'))
+            try:
+                new_username = form.username.data
+                user.username = new_username
+                db.session.commit()
+                session['username'] = new_username
+                return redirect(url_for('userprofile'))
+            except Exception:
+                flash('The username is taken')
+        if 'Cancel' in request.form:
+            return redirect(url_for('home'))
     else:
         return redirect(url_for('home'))
     return render_template('editUsername.html', title='Edit Username', form=form, user=user)
+
+
+@app.route('/user/profile/email', methods=['GET', 'POST'])
+def editemail():
+    if 'id' in session and session['id'] != None:
+        user_id = session['id']
+        user = User.query.get(user_id)
+        form = EditEmailForm(request.form)
+        if form.validate_on_submit():
+            try:
+                new_email = form.email.data
+                user.email = new_email
+                db.session.commit()
+                session['email'] = new_email
+                return redirect(url_for('userprofile'))
+            except Exception:
+                flash('Email is already used')
+        if 'Cancel' in request.form:
+            return redirect(url_for('home'))
+    else:
+        return redirect(url_for('home'))
+    return render_template('editEmail.html', title='Edit Email', form=form, user=user)
+
+@app.route('/user/profile/password', methods=['GET', 'POST'])
+def editpassword():
+    if 'id' in session and session['id'] != None:
+        user_id = session['id']
+        user = User.query.get(user_id)
+        form = EditPasswordForm(request.form)
+        if form.validate_on_submit():
+            current_password = form.current_password
+            confirm_current_password = form.confirm_current_password
+            new_password = form.new_password
+            current_password_hash = generate_password_hash(current_password, method='pbkdf2:sha256')
+            new_password_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
+            if current_password == confirm_current_password:
+                if (user.password_hash == current_password_hash):
+                    user.password_hash = new_password_hash
+                    db.session.commit()
+                    return redirect(url_for('userprofile'))
+                else:
+                    flash('The password is incorrect')
+            else:
+                flash('The two passwords do not match')
+    else:
+        return redirect(url_for('home'))
+    return render_template('editPassword.html', title='Edit Password', form=form, user=user)
+
+
+@app.route('/user/profile/address', methods=['GET', 'POST'])
+def editaddress():
+    if 'id' in session and session['id'] != None:
+        user_id = session['id']
+        user = User.query.get(user_id)
+        form = AddressForm(request.form)
+        if form.validate_on_submit():
+            user.full_name = form.full_name.data
+            user.address_line_one = form.address_line_one.data
+            user.address_line_two = form.address_line_two.data
+            user.city = form.city.data
+            user.state_province_region = form.state_province_region.data
+            user.zip_postal_code = form.zip_postal_code.data
+            user.country = form.country.data
+            db.session.commit()
+            return redirect(url_for('userprofile'))
+        if 'Cancel' in request.form:
+            return redirect(url_for('home'))
+    else:
+        return redirect(url_for('home'))
+    return render_template('editAddress.html', title='Edit Address', form=form, user=user)
 
 @app.route('/user/profile', methods=['GET', 'POST'])
 def userprofile():
     if 'id' in session and session['id'] != None:
         user_id = session['id']
         user = User.query.get(user_id)
-        if request.method == "POST":
-            if request.form['Edit Username'] == 'Edit Username':
-                return redirect(url_for('editusername'))
-        #if request.form[''] == 'Edit Email':
-        #    edit_email_form = EditEmailForm(request.form)
-        #    if edit_email_form.validate_on_submit():
-        #        new_email = edit_email_form.email
-        #        user.update(dict(email=new_email))
-        #if request.form['Edit Password'] == 'Edit Password':
-        #    edit_password_form = EditPasswordForm(request.form)
-        #    if edit_password_form.validate_on_submit():
-        #        current_password = edit_password_form.current_password
-        #        confirm_current_password = edit_password_form.confirm_current_password
-        #        new_password = edit_password_form.new_password
-        #        current_password_hash = generate_password_hash(current_password, method='pbkdf2:sha256')
-        #        confirm_current_password_hash = generate_password_hash(confirm_current_password, method='pbkdf2:sha256')
-        #        new_password_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
-        #        if current_password == confirm_current_password:
-        #            if (user.password_hash == current_password_hash):
-        #                user.update(dict(password_hash=new_password_hash))
-        #            else:
-        #                flash('The password is incorrect')
-        #        else:
-        #            flash('The two passwords do not match')
-        #if request.form['Edit Address'] == 'Edit Address':
-        #    edit_address_form = AddressForm
-        #    if edit_address_form.validate_on_submit():
-        #        full_name = edit_address_form.full_name
-        #        address_line_one = edit_address_form.address_line_one
-        #        address_line_two = edit_address_form.address_line_two
-        #        city = edit_address_form.city
-        #        state_province_region = edit_address_form.state_province_region
-        #        zip_postal_code = edit_address_form.zip_postal_code
-        #        country = edit_address_form.country
-        #        if address_line_two == None:
-        #            user.update(dict(full_name=full_name, address_line_one=address_line_one, city=city,
-        #                             state_province_region=state_province_region, zip_postal_code=zip_postal_code,
-        #                             country=country))
-        #        else:
-        #            user.update(dict(full_name=full_name, address_line_one=address_line_one,
-        #                             address_line_two=address_line_two, city=city,
-        #                             state_province_region=state_province_region,
-        #                             zip_postal_code=zip_postal_code, country=country))
+        if 'Edit Username' in request.form:
+            return redirect(url_for('editusername'))
+        if 'Edit Email' in request.form:
+            return redirect(url_for('editemail'))
+        if 'Edit Password' in request.form:
+            return redirect(url_for('editpassword'))
+        if 'Edit Address' in request.form:
+            return redirect(url_for('editaddress'))
     else:
         return redirect(url_for('home'))
     return render_template('userProfile.html', title='User Profile', user=user)
