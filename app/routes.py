@@ -260,6 +260,7 @@ def editaddress():
         return redirect(url_for('home'))
     return render_template('editAddress.html', title='Edit Address', form=form, user=user)
 
+
 @app.route('/user/profile', methods=['GET', 'POST'])
 def userprofile():
     if 'id' in session and session['id'] != None:
@@ -273,6 +274,25 @@ def userprofile():
             return redirect(url_for('editpassword'))
         if 'Edit Address' in request.form:
             return redirect(url_for('editaddress'))
+        if 'Delete Account' in request.form:
+            return redirect(url_for('deleteaccount'))
     else:
         return redirect(url_for('home'))
     return render_template('userProfile.html', title='User Profile', user=user)
+
+
+@app.route('/user/delete', methods=['GET', 'POST'])
+def deleteaccount():
+    if 'id' in session and session['id'] != None:
+        user_id = session['id']
+        user = User.query.get(user_id)
+        if 'Yes' in request.form:
+            db.session.delete(user)
+            db.session.commit
+            flash('User {} has been deleted'.format(user.username))
+            return redirect(url_for('home'))
+        if 'No' in request.form:
+            return redirect(url_for('userprofile'))
+    else:
+        return redirect(url_for('home'))
+    return render_template('deleteAccount.html', title='Delete Account', user=user)
