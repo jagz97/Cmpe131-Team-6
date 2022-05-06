@@ -4,9 +4,9 @@ from unicodedata import category
 from flask import render_template, redirect, url_for, request, flash, session
 from app.forms import Products, LoginForm, SignUpForm, ReviewForm, EditUsernameForm, EditPasswordForm, EditEmailForm, AddressForm
 from app.models import Brand, Category, AddProduct, User, Review
+from werkzeug.security import check_password_hash, generate_password_hash
 from flask_wtf import FlaskForm
 from wtforms import StringField
-from hashlib import md5
 
 @app.route('/')
 def home():
@@ -84,14 +84,14 @@ def signup():
         username = form.username.data
         email = form.email.data
         password = form.password.data
-        password_hash = md5(password.encode())
-        full_name = form.full_name
-        address_line_one = form.address_line_one
-        address_line_two = form.address_line_two
-        city = form.city
-        state_province_region = form.state_province_region
-        zip_postal_code = form.zip_postal_code
-        country = form.country
+        password_hash = generate_password_hash(password, method='pbkdf2:sha256')
+        full_name = form.full_name.data
+        address_line_one = form.address_line_one.data
+        address_line_two = form.address_line_two.data
+        city = form.city.data
+        state_province_region = form.state_province_region.data
+        zip_postal_code = form.zip_postal_code.data
+        country = form.country.data
         newuser = User(username=username, email=email, password_hash=password_hash, full_name=full_name,
                        address_line_one=address_line_one, address_line_two=address_line_two,
                        city=city, state_province_region=state_province_region, zip_postal_code=zip_postal_code,
@@ -112,7 +112,7 @@ def productpage(product_id):
     product = AddProduct.query.get(product_id)
     if request.form['Rate Product'] == 'Rate Product':
         session['product_id'] = product_id
-        if 'username' in session:# if user is logged in, route to review page, otherwise, route to login page
+        if 'username' in session:# if user is logged in, rSoute to review page, otherwise, route to login page
             return redirect(url_for('/product/review'))
         session.pop('product_id', None)
         return redirect(url_for('/login'))
@@ -180,10 +180,10 @@ def userprofile():
                 current_password = edit_password_form.current_password
                 confirm_current_password = edit_password_form.confirm_current_password
                 new_password = edit_password_form.new_password
-                current_password_hash = md5(current_password.encode())
-                confirm_current_password_hash = md5(confirm_current_password.encode())
-                new_password_hash = md5(new_password.encode())
-                if current_password_hash == confirm_current_password_hash:
+                current_password_hash = generate_password_hash(current_password, method='pbkdf2:sha256')
+                confirm_current_password_hash = generate_password_hash(confirm_current_password, method='pbkdf2:sha256')
+                new_password_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
+                if current_password == confirm_current_password:
                     if (user.password_hash == current_password_hash):
                         user.update(dict(password_hash=new_password_hash))
                     else:
