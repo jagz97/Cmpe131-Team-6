@@ -180,6 +180,7 @@ def editusername():
                 session['username'] = new_username
                 return redirect(url_for('userprofile'))
             except Exception:
+                db.session.rollback()
                 flash('The username is taken')
         if 'Cancel' in request.form:
             return redirect(url_for('userprofile'))
@@ -202,6 +203,7 @@ def editemail():
                 session['email'] = new_email
                 return redirect(url_for('userprofile'))
             except Exception:
+                db.session.rollback()
                 flash('Email is already used')
         if 'Cancel' in request.form:
             return redirect(url_for('userprofile'))
