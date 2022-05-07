@@ -12,19 +12,30 @@ from app.helpers import seller_required
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import current_user, login_user, logout_user,login_required
 
+"""
+Route to the home page of the application
+"""
 @app.route('/')
 def home():
     products = AddProduct.query.filter(AddProduct.availablestock > 0)
 
     return render_template('home.html', products=products)
 
+"""
+Returns the items searched from added products
+Created search functionality using m-search
+Source: https://github.com/honmaple/flask-msearch
+"""
 @app.route('/result')
 def result():
-    searchword = request.args.get('q')
+    searchword = request.args.get('q') #search by keywords
     products = AddProduct.query.msearch(searchword, fields=['name','description'] , limit=3)
     
     return render_template('search.html',products= products)
 
+"""
+Retireves the information from add brand form and adds it to the database
+"""
 @app.route('/addbrand', methods=['GET', 'POST'])
 def addbrand():
     if request.method == "POST":
@@ -41,6 +52,10 @@ def addbrand():
     return render_template('items/brand.html', brand='brand')
 
 
+
+"""
+Retireves the information from add product form and adds it to the database
+"""
 @app.route('/addcategory', methods=['GET', 'POST'])
 def addcategory():
     if request.method == "POST":
@@ -58,6 +73,10 @@ def addcategory():
     return render_template('items/brand.html')
 
 
+
+"""
+Retrieves the information from add product form and adds it to the database
+"""
 @app.route('/addproduct', methods=['GET', 'POST'])
 @seller_required
 def addproduct():
@@ -85,7 +104,9 @@ def addproduct():
             return redirect(url_for('addproduct'))
 
         addprod = AddProduct(name=name, price=price, category_id=category, brand_id=brand, discount=discount,
-                             description=description, availablestock=availablestock, image=image, image_1=image_1, image_2=image_2,username= session['username'])
+                             description=description, availablestock=availablestock,
+                              image=image, image_1=image_1, image_2=image_2,
+                              username= session['username']) # only logged in merchant can see the page
 
         db.session.add(addprod)
         # if form is successfully submitted show success message
@@ -97,7 +118,9 @@ def addproduct():
     return render_template('items/product.html', title='title', form=form, brands=brands, categories=categories, rows = rows)
 
 
-#merchant signup
+"""
+Creates the route for merchant signup form and retrievs the data, add it to the database
+"""
 @app.route('/signupmerchant',  methods=['GET', 'POST'])
 def signup_merchant():
     form = MerchantSignup(request.form)
@@ -127,7 +150,9 @@ def signup_merchant():
         
     return render_template("merchantsignup.html",form= form)
 
-
+"""
+Login Page for merchant
+"""
 @app.route('/merchantlogin', methods=['GET','POST'])
 def login_merchant():
     form = MerchantLogin(request.form)
@@ -146,14 +171,21 @@ def login_merchant():
         return redirect(url_for('addproduct') )
     return render_template('merchantlogin.html', form = form)
 
-  
+
+
+"""
+Logs out the signed in merchant and redirects to login page
+"""
 @app.route('/merchantlogout')
 def logut_merchant():
     session.clear()
     flash('You have been logged out.Login again?')
     return redirect(url_for('login_merchant'))
 
-  
+"""
+Add items to cart
+Lets user add item to cart and keep tracks of it while the user is in session
+""" 
 @app.route('/addcart', methods=['POST','GET'])
 def AddCart():
     try:
@@ -161,13 +193,14 @@ def AddCart():
         quantity = request.form.get('quantity')
         product = AddProduct.query.filter_by(id=product_id).first()
         if product_id and quantity and request.method == "POST":
-            ditems = {product_id:{'name':product.name,'price':product.price,'discount':product.discount,'quantity':quantity,'image':product.image}}
+            ditems = {product_id:{'name':product.name,'price':product.price,'discount':product.discount,
+            'quantity':quantity,'image':product.image}} #create a dictionary of the items
         if 'Cart' in session:
             print(session['Cart'])
             if product_id in session['Cart']:
                flash("Item already in cart")
             else:
-                session['Cart']= Merge(session['Cart'],ditems)
+                session['Cart']= Merge(session['Cart'],ditems) #merge the new items added to cart with dict
                 return redirect(request.referrer)
         else:
             session['Cart']= ditems
@@ -177,14 +210,21 @@ def AddCart():
     finally:
         return redirect(request.referrer)
 
+
+"""
+This function takes two dict and merges them to create one single dict
+Manages the items being added to cart
+"""
 def Merge(dict1,dict2):
-    if isinstance(dict1, list) and isinstance(dict2, list):
+    if isinstance(dict1, list) and isinstance(dict2, list): # merge list and dict 
         return dict1 + dict2
-    elif isinstance(dict1, dict) and isinstance(dict2, dict):
+    elif isinstance(dict1, dict) and isinstance(dict2, dict): # merge two dict 
         return dict(list(dict1.items()) + list(dict2.items()))
     return False
 
-
+"""
+Retrive items from cart
+"""
 @app.route('/cart')
 def getCart():
     if 'Cart' not in session or len(session['Cart']) <= 0: # check if cart has items
@@ -221,7 +261,9 @@ def updatecart(code):
             return redirect(url_for('getCart'))
 
 
-
+"""
+lets user delete items from cart
+"""
 @app.route('/deleteitem/<int:id>')
 def deleteitem(id):
     if 'Shoppingcart' not in session or len(session['Shoppingcart']) <= 0:
@@ -237,6 +279,10 @@ def deleteitem(id):
         return redirect(url_for('getCart'))
 
 
+
+"""
+Clears the current items in cart
+"""
 @app.route('/clearcart')
 def clearcart():
     try:
@@ -245,9 +291,14 @@ def clearcart():
     except Exception as e:
         print(e)
 
+
+"""
+Manages the signup for Customer
+Retrives info from the signup form and adds it to the database
+"""
 @app.route('/signUp', methods=['GET', 'POST'])
 def signup():
-    if not current_user.is_authenticated:
+    if 'id' not in session or session['id'] == None:
         form = SignUpForm(request.form)
         if form.validate_on_submit():
             username = form.username.data
@@ -278,55 +329,56 @@ def signup():
     return render_template('signUp.html', title='Sign Up', form=form)
 
 
+
 @app.route('/product/<product_id>', methods=['GET', 'POST'])
 def productpage(product_id):
     product = AddProduct.query.get(product_id)
-    reviews = product.reviews
     if 'Rate Product' in request.form:
-        if current_user.is_authenticated:# if user is logged in, route to review page, otherwise, route to login page
-            return redirect(url_for('review', product_id=product_id))
-        return redirect(url_for('login'))
-    return render_template('items/productDetails.html', title='Product Details', product=product, reviews=reviews)
-
-
-@app.route('/product/review/<product_id>', methods=['GET', 'POST'])
-def review(product_id):
-    product = AddProduct.query.get(product_id)
-    if product == None:
+        session['product_id'] = product_id
+        if 'id' in session:# if user is logged in, route to review page, otherwise, route to login page
+            return redirect(url_for('review'))
+        session.pop('product_id', None)
         return redirect(url_for('home'))
-    if current_user.is_authenticated:
+    return render_template('items/productDetails.html', title='Product Details', product=product)
+
+
+@app.route('/product/review', methods=['GET', 'POST'])
+def review():
+    if 'id' in session and session['id'] != None and 'product_id' in session and session['product_id'] != None:
         # if the cancel button is pressed, then route to the product page
         form = ReviewForm(request.form)
         if 'Cancel Review' in request.form:
-            return redirect(url_for('productpage', product_id=product_id))
+            product_id = session['product_id']
+            session.pop('product_id', None)
+            return redirect(url_for(productpage, product_id))
             # if a user is logged in and has selected a product to review, then the review is added
         if form.validate_on_submit():
-            user = current_user
+            product_id = session['product_id']
+            username = session['username']
             reviewExists = False
             # get the old review object if it exists
-            review = Review.query.filter(Review.username == user.username and Review.product_id == product_id).first()
+            review = Review.query.filter(Review.username == username).first()
             if review != None:
                 reviewExists = True
             rating = form.rating.data
             reviewdata = form.review.data
-            if rating <= 5 and rating >=0:
-                ## if there is no review, then add a review
-                if reviewExists:
-                    review.review = reviewdata
-                    review.rating = rating
-                    db.session.commit()
-                    flash(f'Your review has been updated')
-                else:
-                    newreview = Review(username=user.username, rating=rating, review=reviewdata, product_id=product_id)
-                    db.session.add(newreview)
-                    db.session.commit()
-                    flash(f'Your review has been added')
-                return redirect(url_for('productpage', product_id=product_id))
-            else:
-                flash('Rating must be from 0-5 stars')
+            ## if there is no review, then add a review
+            if not reviewExists:
+                newreview = Review(username=username, rating=rating, review=reviewdata, product_id=product_id)
+                db.session.add(newreview)
+                db.session.commit()
+                flash(f'Your review has been added')
+            # else update the old review
+            #else:
+                #review.review =
+            url = '/product/' + product_id
+            session.pop('product_id', None)
+            return redirect(url_for(url))
+        else: # the product or the user is not in session, so the page is rerouted to the home page
+            return redirect(url_for(''))
     else:
-        return redirect(url_for('login'))
-    return render_template('items/productReview.html', title='Product Review', form=form, product=product)
+        return redirect(url_for('home'))
+    return render_template('items/productReview.html', title='Product Review', form=form)
 
 @app.route('/user/profile/username', methods=['GET', 'POST'])
 def editusername():
@@ -346,7 +398,7 @@ def editusername():
         if 'Cancel' in request.form:
             return redirect(url_for('userprofile'))
     else:
-        return redirect(url_for('login'))
+        return redirect(url_for('userprofile'))
     return render_template('editUsername.html', title='Edit Username', form=form, user=user)
 
 
@@ -367,7 +419,7 @@ def editemail():
         if 'Cancel' in request.form:
             return redirect(url_for('userprofile'))
     else:
-        return redirect(url_for('login'))
+        return redirect(url_for('home'))
     return render_template('editEmail.html', title='Edit Email', form=form, user=user)
 
 @app.route('/user/profile/password', methods=['GET', 'POST'])
@@ -392,7 +444,7 @@ def editpassword():
         if 'Cancel' in request.form:
             return redirect(url_for('userprofile'))
     else:
-        return redirect(url_for('login'))
+        return redirect(url_for('home'))
     return render_template('editPassword.html', title='Edit Password', form=form, user=user)
 
 
@@ -414,7 +466,7 @@ def editaddress():
         if 'Cancel' in request.form:
             return redirect(url_for('userprofile'))
     else:
-        return redirect(url_for('login'))
+        return redirect(url_for('home'))
     return render_template('editAddress.html', title='Edit Address', form=form, user=user)
 
 
@@ -433,7 +485,7 @@ def userprofile():
         if 'Delete Account' in request.form:
             return redirect(url_for('deleteaccount'))
     else:
-        return redirect(url_for('login'))
+        return redirect(url_for('home'))
     return render_template('userProfile.html', title='User Profile', user=user)
 
 
@@ -450,10 +502,14 @@ def deleteaccount():
         if 'No' in request.form:
             return redirect(url_for('login'))
     else:
-        return redirect(url_for('login'))
+        return redirect(url_for('home'))
     return render_template('deleteAccount.html', title='Delete Account', user=user)
 
 
+"""
+Manges the login for customer trying to login
+Checks for the password and retieve the user profile for right user
+"""
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -465,10 +521,15 @@ def login():
             flash('Invalid username or password')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
-        return redirect(url_for('login'))
+        return redirect(url_for('home'))
     return render_template('login.html', title='Sign In', form=form)
 
 
+
+"""
+Manges the logout response from user 
+Securely logs out the customer and redirects them to login page
+"""
 @app.route('/logout')
 def logout():
     logout_user()
@@ -494,4 +555,3 @@ def get_order():
             flash('Could not retrieve cart order. Try again')
             return redirect(url_for('getCart'))
 
-#carts

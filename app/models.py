@@ -6,16 +6,16 @@ from app import login
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
 
-# Source Code: Simple Relations https://flask-sqlalchemy.palletsprojects.com/en/2.x/quickstart/
 
-
+"""
+Source Code: Simple Relations https://flask-sqlalchemy.palletsprojects.com/en/2.x/quickstart/
+"""
 class AddProduct(db.Model):
     __searchable__= ['name','description']
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(1000), nullable=False)
-    discount = db.Column(db.Integer, default=0)
-    # Integer with 2 decimal places
+    discount = db.Column(db.Integer, default=0) # Integer with 2 decimal places
     price = db.Column(db.Numeric(10, 2), nullable=False)
     availablestock = db.Column(db.Integer, nullable=False)
     pub_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -62,10 +62,10 @@ class User(UserMixin, db.Model):
     country = db.Column(db.String(64))
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self.password_hash = generate_password_hash(password) #set user password hash
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        return check_password_hash(self.password_hash, password) #check user password hash while retrieving
     
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -88,8 +88,10 @@ class Merchant(db.Model):
          return '<Name %r>' % self.name
 
 
+
 """
 Jsonify the cart items and dumb the value to store cart
+Source: https://ax.dev/versions/0.1.1/api/_modules/ax/storage/sqa_store/json.html
 """
 class JsonEcodedDict(db.TypeDecorator):
     impl = db.Text
@@ -104,6 +106,8 @@ class JsonEcodedDict(db.TypeDecorator):
         else:
             return json.loads(value)
 
+
+
 class CustomerOrder(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     invoice = db.Column(db.String(20), unique=True, nullable=False)
@@ -116,7 +120,10 @@ class CustomerOrder(db.Model):
         return'<CustomerOrder %r>' % self.invoice
 
 
-
+"""
+User mixing function that retrieves the user in session id
+Source: https://www.pythonfixing.com/2021/12/fixed-how-to-implement-userloader.html
+"""
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
