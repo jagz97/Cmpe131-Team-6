@@ -26,7 +26,7 @@ To run this project, install it locally using terminal with these commands:
 
     $ git clone https://github.com/jagz97/Cmpe131-Team-6
     $ cd Cmpe131-Team-6
-To install all required dependencies, type this command:
+To install all required dependencies, type this command inside the project directory:
 
     $ pip install -r requirements.txt
 
@@ -59,8 +59,11 @@ To install all required dependencies, type this command:
 - The user can view the reviews of a product and add a review with the button.
 - The user will enter their star rating and can add a review if they like.
 ## Features
-- Users can create customer account is at /signUp
-
+- Customers can create customer account is at /signUp (Hector Saldivar)
+- Customers can edit account at /user/profile (Hector Saldivar)
+- Customers can delete account at /user/delete (Hector Saldivar)
+- Customers can view a products reviews and other details at /product/<product_id> (Hector Saldivar)
+- Customers can add a review if they are logged in at /product/review/<product_id> (Hector Saldivar)
 # Cmpe131 Team 6
 - Hector Saldivar (@HectorSal) Team Lead
 - Jagjit Singh (@jagz97)
