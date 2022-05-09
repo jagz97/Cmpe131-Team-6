@@ -7,10 +7,6 @@ from flask_msearch import Search
 from app.helpers import seller_required
 from flask_login import LoginManager
 
-"""
-Join the directory path
-Source:https://python.hotexamples.com/examples/flask/Flask/config%5B%27basedir%27%5D/python-flask-config%5B%27basedir%27%5D-method-examples.html
-"""
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
@@ -30,14 +26,9 @@ configure_uploads(app, photos)
 
 
 db = SQLAlchemy(app)
-
-
 search = Search()
 search.init_app(app) # initalize search
 
-"""
-login helper that helps manages the curent logged in user
-"""
 login = LoginManager(app)
 login.login_view = 'login'
 
