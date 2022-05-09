@@ -222,6 +222,7 @@ def Merge(dict1,dict2):
         return dict(list(dict1.items()) + list(dict2.items()))
     return False
 
+
 """
 Retrive items from cart
 """
@@ -240,7 +241,9 @@ def getCart():
     return render_template('cart.html')
 
 
-
+"""
+Updates the available items in cart
+"""
 @app.route('/updatecart/<int:code>', methods=['POST'])
 def updatecart(code):
     if 'Cart' not in session or len(session['Cart']) <= 0:
