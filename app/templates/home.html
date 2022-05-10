@@ -1,5 +1,35 @@
 {% extends 'base.html' %}
 {% block content %}
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+
+{% for message in messages %}
+<li>{{ message }}</li>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+
+{% if current_user.is_anonymous %}
+    <h1>Customer</h1>
+<a href="{{ url_for('login') }}">Login</a>
+    
+New User?
+    <a href="{{ url_for('signup')}}">Register</a>
+    {% else %}
+
+    <h1>Hi, {{ current_user.username }}!</h1>
+    <a href="{{url_for('userprofile')}}">Profile</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
+   
+    {% endif %}
+
+<h1>Are you a seller</h1>
+<a href="{{ url_for('signup_merchant') }} ">Sign Up/Login Here</a>
+
+
+
 <div>
     <div class="row">
         {% for product in products %}
@@ -7,17 +37,26 @@
             <div class="card">
 
                 <img src="{{url_for('static', filename='img/' + product.image_1)}}" alt="{{product.name}}"
-                    class="card-img-top" height="300">
+                    class="card-img-top" height="250">
                 <p class="card-body">
-                    {% if product.discount > 0 %}
-                <p>{{ product.discount }}% Off</p>
+                {% if product.discount > 0 %}
+            {{ product.discount }}% Off</p>
                 {% endif %}
-                <p class="text-center">{{product.name}}</p>
-                <p clas="text-center">Price ${{product.price}}</p>
+                {{product.name}}
+                <p clas="text-center">Price ${{product.price}}
                 </p>
                 <div class="card-footer">
-                    <a href="#" class=" float-left btn btn-sm ">details</a>
-                    <a href="#" class="float-right btn btn-sm ">Add to Cart</a>
+                    <a href="/product/{{product.id}}" class=" float-left btn btn-sm btn-primary " float-left>Product details</a>
+                    <form action="{{url_for('AddCart')}}" method="post">
+                        <input type="hidden" name="product_id" value="{{product.id}}">
+                        <input type="number" name ="quantity" id="" value="1" min="1" max="{{product.availablestock}}">
+
+                        <button type="submit" class="btn btn-sm btn-primary" btn-warning float-right> Add to Cart</button>
+
+
+                    </form>
+
+
                 </div>
 
             </div>

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class= "container">
+    <div class="row">
+        <table class="table table-sm">
+            <thead>
+                <td>Item</td>
+                <td>Name</td>
+                <td>Price</td>
+                <td>Quantity</td>
+
+                <td>Discount</td>
+                <td>Subtotal</td>
+                <td>Update</td>
+                <td>remove</td>
+        
+            </thead>
+            <tbody>
+            {% for key,product in session['Cart'].items() %}  
+            <tr>
+                <td>{{loop.index}}</td>
+                <td>{{product.name}}</td>
+                <td>${{product.price}}</td>
+                <td>{{product.quantity}}</td>
+                {% if product.discount > 0 %}
+                <td>{{product.discount}}%</td>
+                {% else %}
+                <td> </td>
+                {% endif%}
+                <td>{{product.Subtotal}}</td>
+                <td><a href="#">Update</a></td>
+                <td><a href="#">Delete</a></td>
+                
+
+            </tr>
+            {% endfor %}
+
+            </tbody>
+            
+        </table>
+        
+   {{session['Cart']}}     
+
+{% endblock content %}

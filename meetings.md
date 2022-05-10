@@ -19,3 +19,34 @@ Team updates:
 Summarize group progress:
 - Jagjit and Hectors pull requests were approved and merged onto the main branch
 
+### 2022-05-02 at 22:45
+Who attended
+- Jagjit, Nicholas, Hector
+Team Updates:
+- Jagjit set up the database and application file structure, finished add item to seller, add pictures for items
+- Jagjit will work on find items, merchant account, add to cart
+- Hector will work on creat account/delete account, edit user profile, and add product rating
+- Nicholas will work on login/logout
+Summarize group progress:
+- 2 use cases are finished
+
+### 2022-05-06 at 00:35
+Who attended
+- Jagjit, Hector
+Team Updates:
+- Jagjit finished search functionality, add items to cart, merchant sign up/login
+- Jagjit will work on cart functionality, login/logout
+- Hector finished sign up, delete account, and edit profile
+- Hector will work on add product review 
+Summarize group progress:
+- 7 use cases are finished
+
+### 2022-05-06 at 16:35
+Who attended
+-Jagjit, Hector
+Team Updates:
+- Jagjit finished login/logout and worked on cart functionality
+- Hector finished add product review
+- Hector and Jagjit will finish the gantt chart, README.md, and mkdocs
+Summarize group progress:
+- 10 use cases are finished

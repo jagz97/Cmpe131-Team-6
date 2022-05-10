@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+
+{% for message in messages %}
+<li>{{ message }}</li>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<h1>{{ product.name }}</h1>
+
+<form action="" method="post" novalidate>
+    <input type="submit" name="Cancel Review" value="Cancel Review">
+</form>
+<form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.rating.label }}<br>
+            {{ form.rating(size=1) }}
+        </p>
+        <p>
+            {{ form.review.label }}<br>
+            {{ form.review(size=500) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+</form>
+
+
+{% endblock content %}
