@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
+
 {% block content %}
+
     <div class ="col-md-12">
     Order id: {{ orders.invoice }}
         <br>
@@ -41,7 +43,7 @@
                 <td>{{product.quantity}}</td>
             {% set discount = "%0.2f" |format((product.discount/100) * product.price|float) %}
                 {% if product.discount > 0 %}
-                    <td>{{product.discount}}% {{ discount }}</td>
+                    <td>{{product.discount}}% </td>
                 {% else %}
                     <td> </td>
 
@@ -49,8 +51,8 @@
 
 
                 {% set total =  product.price|float  * product.quantity|float  %}
-                <td>{{ "%0.2f"| format( discount|float)}}
-                {{ total }}</td>
+                <td>{{ "%0.2f"| format((total|float)-discount|float)}}
+                </td>
                 <td></td>
 
 

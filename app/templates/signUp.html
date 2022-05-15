@@ -2,6 +2,7 @@
 
 {% block content %}
 
+
 <h1>Sign Up</h1>
     {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -56,5 +57,6 @@
         </p>
         <p>{{ form.submit() }}</p>
     </form>
+
 
 {% endblock content %}
