@@ -1,0 +1,203 @@
+@import url("https://fonts.googleapis.com/css?family=Raleway:900&display=swap");
+
+.img-fluild{
+	max-width: 100%;
+	height: auto;
+}
+
+.extra-div h2{
+	font-size: 3rem;
+	margin: 20px 0 15 px 0;
+	font-weight: bolder;
+	line-height: 4px;
+	word-spacing: 6px;
+	font-style: italic;
+	font-family: 'Courgette';
+	color: #082652;
+
+
+}
+
+.header{
+	width: 100%;
+	height: auto;
+	background-color: #606060;
+	position: relative;
+}
+
+
+.carousel-item img{
+	content: "";
+	position: relative;
+	top: 0%;
+	bottom: 0%;
+	left: 0;
+	right: 0;
+	background-color:rgba(44,91,164,44);opacity:0.5;
+
+
+}
+
+
+
+
+
+
+
+.header-section h1{
+	font-size: 50px;
+	line-height: 1.5;
+	font-weight: bold;
+	font-family: 'Courgette';
+	color: #fff;
+
+
+}
+
+.header-section{
+	width: 100;
+	height: inherit;
+	color: white;
+	text-align: center;
+	position: relative;
+	font-family: 'Courgette';
+}
+
+.center-div{
+	width: 100%;
+	height: auto;
+	position: absolute;
+	top:75%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	-webkit-transform: translate(-50%, -50%);
+
+
+
+}
+
+.nav-item a{
+
+	font-weight: bold;
+
+}
+
+.header-buttons a{
+	border: 2px solid #fff;
+	border-radius: 100px;
+	margin: 0 5px;
+	padding: 12px 35px;
+	outline: none;
+	color: #fff;
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 2;
+	text-align: center;
+
+
+}
+
+
+.header-buttons a:hover{
+	color: #1500ff;
+	background: #fff;
+	text-decoration: none;
+	box-shadow: 58px 42px 68px 2px rgba(0, 0, 0, 0.3)
+
+}
+
+
+body {
+    margin: 0px;
+}
+
+#container {
+    position: absolute;
+    margin: auto;
+    width: 100vw;
+    height: 80pt;
+    top: 0;
+    bottom: 0;
+
+    filter: url(#threshold) blur(0.6px);
+}
+
+#text1,
+#text2 {
+    position: absolute;
+    width: 100%;
+    display: inline-block;
+
+    font-family: "Courgette";
+    font-size: 80pt;
+
+    text-align: center;
+
+    user-select: none;
+}
+
+
+.animate-charcter
+{
+   text-transform: uppercase;
+  background-image: linear-gradient(
+    -225deg,
+    #264653 0%,
+    #2A9D8F 29%,
+    #E9C46A 67%,
+    #E76F51 100%
+  );
+  background-size: auto auto;
+  background-clip: border-box;
+  background-size: 200% auto;
+  color: #fff;
+  text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textclip 2s linear infinite;
+  display: inline-block;
+      font-size: 25px;
+    font-family: Arvo, serif;
+    font-weight: bold;
+}
+
+@keyframes textclip {
+  to {
+    background-position: 200% center;
+  }
+}
+
+
+    .card {
+      border: 1px solid #ccc;
+      background-color: #f8f9fa;
+      padding: 20px;
+      margin-bottom: 10px;
+    }
+
+
+    P3{
+
+    font-family: "Cormorant SC", serif;
+        margin-top: -5px;
+    text-align: center;
+    font-size: 20px;
+        font-weight: bold;
+    color: #293241;
+
+
+}
+    .text-start{
+        margin-top: 2.5px;
+    }
+
+	  input.form-control {
+       width: 300px;
+
+   }
+   .navbar-brand {
+       margin-top: -30px;
+       margin-bottom: -45px;
+       margin-left: -40px;
+   }
