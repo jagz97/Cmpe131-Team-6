@@ -41,7 +41,7 @@ class SignUpForm(FlaskForm):
     address_line_two = StringField('Address Line 2')
     city = StringField('City', validators=[DataRequired()])
     state_province_region = StringField('State/Province/Region', validators=[DataRequired()])
-    zip_postal_code = StringField('ZIP/Postal Code', validators=[DataRequired()])
+    zip_postal_code = IntegerField('ZIP/Postal Code', validators=[DataRequired()])
     country = StringField('Country', validators=[DataRequired()])
     submit = SubmitField('Create Account')
 

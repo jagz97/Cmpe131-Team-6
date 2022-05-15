@@ -1,32 +1,79 @@
+import secrets
+
+from flask import render_template, redirect, url_for, request, flash, session
+from flask_login import current_user, login_user, logout_user, login_required
+from werkzeug.security import check_password_hash, generate_password_hash
+
 from app import app as app
-from app import db, photos, search
-from unicodedata import category
-from flask import render_template, redirect, url_for, request, flash, session, current_app
-from app.forms import Products, LoginForm, SignUpForm, ReviewForm, EditUsernameForm, EditPasswordForm, EditEmailForm, AddressForm, SearchForm, MerchantSignup, MerchantLogin
-from app.models import Brand, Category, AddProduct, User, Review, Merchant, CustomerOrder
-from werkzeug.security import check_password_hash, generate_password_hash
-from sqlalchemy import update
-from flask_wtf import FlaskForm
-from wtforms import StringField
+from app import db, photos
+from app.forms import Products, LoginForm, SignUpForm, ReviewForm, EditUsernameForm, EditPasswordForm, EditEmailForm, \
+    AddressForm, MerchantSignup, MerchantLogin
 from app.helpers import seller_required
-from werkzeug.security import check_password_hash, generate_password_hash
-from flask_login import current_user, login_user, logout_user,login_required
+from app.models import Brand, Category, AddProduct, User, Review, Merchant, CustomerOrder
+import stripe
+
+publishable_key = 'pk_test_51KxjFzLGavGifIHgE46wfoXUQnSmanRC0rX6KRsL6iH0gII3LZ1INayMe0nH51wIJdakCyEwhEoux6tjphnPIbnm00gWEU1Qcx'
+
+stripe.api_key = 'sk_test_51KxjFzLGavGifIHgiMdIOOdRlyHLKg0elxsL5iStElwzlbGrboQmH7RHtS1CJ8VxmZ2IrefIiCjPjZpNqNwG1Aep00kaUCU9cP'
+
+
+@app.route('/payments', methods=['GET', 'POST'])
+def payment():
+    """
+    Stripe payment setup for secure checkout
+    Source: https://stripe.com/docs/payments/checkout/migration
+    """
+    amount = request.form.get('amount')
+    customer = stripe.Customer.create(
+        email=request.form['stripeEmail'],
+        source=request.form['stripeToken'],
+    )
+
+    charge = stripe.Charge.create(
+        customer=customer.id,
+        description='Shop Orders',
+        amount=amount,
+        currency='usd',
+    )
+    return redirect(url_for('success'))
+
+
+@app.route('/success')
+def success():
+    """
+    Success message display upon successful payment
+    """
+    return render_template('success.html')
+
 
 @app.route('/')
 def home():
+    """
+    Route to the home page of the application
+    """
     products = AddProduct.query.filter(AddProduct.availablestock > 0)
 
     return render_template('home.html', products=products)
 
+
 @app.route('/result')
 def result():
+    """
+    Returns the items searched from added products
+    Created search functionality using m-search
+    Source: https://github.com/honmaple/flask-msearch
+    """
     searchword = request.args.get('q')
-    products = AddProduct.query.msearch(searchword, fields=['name','description'] , limit=3)
-    
-    return render_template('search.html',products= products)
+    products = AddProduct.query.msearch(searchword, fields=['name', 'description'], limit=3)
+
+    return render_template('search.html', products=products)
+
 
 @app.route('/addbrand', methods=['GET', 'POST'])
 def addbrand():
+    """
+    Retrieves the information from add brand form and adds it to the database
+    """
     if request.method == "POST":
         try:
             getbrand = request.form.get('brand')
@@ -43,6 +90,9 @@ def addbrand():
 
 @app.route('/addcategory', methods=['GET', 'POST'])
 def addcategory():
+    """
+    Retrieves the information from add product form and adds it to the database
+    """
     if request.method == "POST":
         try:
             getcat = request.form.get('category')
@@ -61,6 +111,9 @@ def addcategory():
 @app.route('/addproduct', methods=['GET', 'POST'])
 @seller_required
 def addproduct():
+    """
+    Retrieves the information from add product form and adds it to the database
+    """
     brands = Brand.query.all()
     categories = Category.query.all()
     form = Products(request.form)
@@ -72,51 +125,56 @@ def addproduct():
         availablestock = form.availableStock.data
         brand = request.form.get('brand')
         category = request.form.get('category')
-        
+
         try:
             # receiving photo from form
             image = photos.save(request.files.get('image'))
             # receiving photo1 from form
             image_1 = photos.save(request.files.get('image_1'))
-         # receiving photo2 from form
+            # receiving photo2 from form
             image_2 = photos.save(request.files.get('image_2'))
         except Exception:
             flash(f'Files need to be photos only. Supported type: jpg, jpeg, png, gif')
             return redirect(url_for('addproduct'))
 
         addprod = AddProduct(name=name, price=price, category_id=category, brand_id=brand, discount=discount,
-                             description=description, availablestock=availablestock, image=image, image_1=image_1, image_2=image_2,username= session['username'])
+                             description=description, availablestock=availablestock, image=image, image_1=image_1,
+                             image_2=image_2, username=session['username'])
 
         db.session.add(addprod)
         # if form is successfully submitted show success message
         flash(f'Product {form.name.data} has been added')
         db.session.commit()
         rows = AddProduct.query.filter_by(username=session['username'])
-        return render_template('items/product.html', title='title', form=form, brands=brands, categories=categories, rows = rows )
+        return render_template('items/product.html', title='title', form=form, brands=brands, categories=categories,
+                               rows=rows)
     rows = AddProduct.query.filter_by(username=session['username'])
-    return render_template('items/product.html', title='title', form=form, brands=brands, categories=categories, rows = rows)
+    return render_template('items/product.html', title='title', form=form, brands=brands, categories=categories,
+                           rows=rows)
 
 
-#merchant signup
-@app.route('/signupmerchant',  methods=['GET', 'POST'])
+@app.route('/signupmerchant', methods=['GET', 'POST'])
 def signup_merchant():
+    """
+    Creates the route for merchant signup form and retrievs the data, add it to the database
+    """
     form = MerchantSignup(request.form)
-    if request.method== "POST":
+    if request.method == "POST":
         session.clear()
         password = form.password.data
         reenter = form.reenter.data
-        if(password!=reenter):
+        if (password != reenter):
             flash('Passwords do not match')
             return redirect(url_for('signup_merchant'))
 
-        #passwordHash
+        # passwordHash
         pass_hash = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
 
         fullname = form.fullname.data
         username = form.username.data
 
-        #db store
-        new_usr = Merchant(fullname = fullname, username=username,password=pass_hash)
+        # db store
+        new_usr = Merchant(fullname=fullname, username=username, password=pass_hash)
         try:
             db.session.add(new_usr)
             db.session.commit()
@@ -124,14 +182,17 @@ def signup_merchant():
             flash('User Name already taken')
             return redirect(url_for('signup_merchant'))
         return redirect(url_for('login_merchant'))
-        
-    return render_template("merchantsignup.html",form= form)
+
+    return render_template("merchantsignup.html", form=form)
 
 
-@app.route('/merchantlogin', methods=['GET','POST'])
+@app.route('/merchantlogin', methods=['GET', 'POST'])
 def login_merchant():
+    """
+    Login Page for merchant
+    """
     form = MerchantLogin(request.form)
-    if request.method=='POST':
+    if request.method == 'POST':
         session.clear()
         username = form.fullname.data
         password = form.password.data
@@ -140,44 +201,57 @@ def login_merchant():
         if result == None or not check_password_hash(result.password, password):
             flash('Username or Password Incorrect. Please try again')
             return redirect(url_for('login_merchant'))
-    
-         #remember the logged in user
-        session["username"] = result.username
-        return redirect(url_for('addproduct') )
-    return render_template('merchantlogin.html', form = form)
 
-  
+        # remember the logged in user
+        session["username"] = result.username
+        return redirect(url_for('addproduct'))
+    return render_template('merchantlogin.html', form=form)
+
+
 @app.route('/merchantlogout')
 def logut_merchant():
+    """
+    Logs out the signed in merchant and redirects to login page
+    """
     session.clear()
     flash('You have been logged out.Login again?')
     return redirect(url_for('login_merchant'))
 
-  
-@app.route('/addcart', methods=['POST','GET'])
+
+@app.route('/addcart', methods=['POST', 'GET'])
 def AddCart():
+    """
+    Add items to cart
+    Lets user add item to cart and keep tracks of it while the user is in session
+    """
     try:
         product_id = request.form.get('product_id')
         quantity = request.form.get('quantity')
         product = AddProduct.query.filter_by(id=product_id).first()
         if product_id and quantity and request.method == "POST":
-            ditems = {product_id:{'name':product.name,'price':product.price,'discount':product.discount,'quantity':quantity,'image':product.image}}
+            ditems = {product_id: {'name': product.name, 'price': product.price, 'discount': product.discount,
+                                   'quantity': quantity, 'image': product.image}}
         if 'Cart' in session:
             print(session['Cart'])
             if product_id in session['Cart']:
-               flash("Item already in cart")
+                flash("Item already in cart")
             else:
-                session['Cart']= Merge(session['Cart'],ditems)
+                session['Cart'] = Merge(session['Cart'], ditems)
                 return redirect(request.referrer)
         else:
-            session['Cart']= ditems
-            return redirect(request.referrer)   
+            session['Cart'] = ditems
+            return redirect(request.referrer)
     except Exception as e:
         flash("Failed, Please try again")
     finally:
         return redirect(request.referrer)
 
-def Merge(dict1,dict2):
+
+def Merge(dict1, dict2):
+    """
+    This function takes two dict and merges them to create one single dict
+    Manages the items being added to cart
+    """
     if isinstance(dict1, list) and isinstance(dict2, list):
         return dict1 + dict2
     elif isinstance(dict1, dict) and isinstance(dict2, dict):
@@ -187,66 +261,56 @@ def Merge(dict1,dict2):
 
 @app.route('/cart')
 def getCart():
-    if 'Cart' not in session or len(session['Cart']) <= 0: # check if cart has items
+    """
+    Retrieves items from cart
+    """
+    if 'Cart' not in session or len(session['Cart']) <= 0:  # check if cart has items
         return redirect(url_for('home'))
     subtotal = 0
-    grandtotal = 0
-    for key,product in session['Cart'].items():
-        discount = (product['discount']/100) * float(product['price'])
-        subtotal += float(product['price']) 
+    g_total = 0
+    for key, product in session['Cart'].items():
+        discount = (product['discount'] / 100) * float(product['price'])
+        subtotal += float(product['price']) * int(product['quantity'])
         subtotal -= discount
-        tax =("%.2f" %(.06 * float(subtotal)))
-        grandtotal = float("%.2f" % (1.06 * subtotal))
-    return render_template('cart.html')
+        sales_tax = ("%.2f" % (.09 * float(subtotal)))
+        g_total = float("%.2f" % (float(sales_tax) + subtotal))
+
+    return render_template('cart.html', g_total=g_total, sales_tax=sales_tax)
 
 
-
-@app.route('/updatecart/<int:code>', methods=['POST'])
-def updatecart(code):
+@app.route('/remove/<int:id>')
+def remove(id):
+    """
+    lets user delete items from cart
+    """
     if 'Cart' not in session or len(session['Cart']) <= 0:
-        return redirect(url_for('home'))
-    if request.method =="POST":
-        quantity = request.form.get('quantity')
-        color = request.form.get('color')
-        try:
-            session.modified = True
-            for key , item in session['Shoppingcart'].items():
-                if int(key) == code:
-                    item['quantity'] = quantity
-                    item['color'] = color
-                    flash('Item is updated!')
-                    return redirect(url_for('getCart'))
-        except Exception as e:
-            print(e)
-            return redirect(url_for('getCart'))
-
-
-
-@app.route('/deleteitem/<int:id>')
-def deleteitem(id):
-    if 'Shoppingcart' not in session or len(session['Shoppingcart']) <= 0:
         return redirect(url_for('home'))
     try:
         session.modified = True
-        for key , item in session['Shoppingcart'].items():
+        for key, item in session['Cart'].items():
             if int(key) == id:
-                session['Shoppingcart'].pop(key, None)
+                session['Cart'].pop(key, None)
                 return redirect(url_for('getCart'))
-    except Exception as e:
-        print(e)
+    except Exception:
+
         return redirect(url_for('getCart'))
 
 
-@app.route('/clearcart')
-def clearcart():
-    try:
-        session.pop('Shoppingcart', None)
-        return redirect(url_for('home'))
-    except Exception as e:
-        print(e)
+@app.route('/clear')
+def clear():
+    """
+    Clears the current items in cart
+    """
+    session.pop('Cart', None)
+    return redirect(url_for('home'))
+
 
 @app.route('/signUp', methods=['GET', 'POST'])
 def signup():
+    """
+    Manages the signup for Customer
+    Retrives info from the signup form and adds it to the database
+    """
     if not current_user.is_authenticated:
         form = SignUpForm(request.form)
         if form.validate_on_submit():
@@ -283,7 +347,7 @@ def productpage(product_id):
     product = AddProduct.query.get(product_id)
     reviews = product.reviews
     if 'Rate Product' in request.form:
-        if current_user.is_authenticated:# if user is logged in, route to review page, otherwise, route to login page
+        if current_user.is_authenticated:  # if user is logged in, route to review page, otherwise, route to login page
             return redirect(url_for('review', product_id=product_id))
         return redirect(url_for('login'))
     return render_template('items/productDetails.html', title='Product Details', product=product, reviews=reviews)
@@ -309,7 +373,7 @@ def review(product_id):
                 reviewExists = True
             rating = form.rating.data
             reviewdata = form.review.data
-            if rating <= 5 and rating >=0:
+            if rating <= 5 and rating >= 0:
                 ## if there is no review, then add a review
                 if reviewExists:
                     review.review = reviewdata
@@ -328,10 +392,11 @@ def review(product_id):
         return redirect(url_for('login'))
     return render_template('items/productReview.html', title='Product Review', form=form, product=product)
 
+
 @app.route('/user/profile/username', methods=['GET', 'POST'])
 def editusername():
     if current_user.is_authenticated:
-       
+
         user = current_user
         form = EditUsernameForm(request.form)
         if form.validate_on_submit():
@@ -369,6 +434,7 @@ def editemail():
     else:
         return redirect(url_for('login'))
     return render_template('editEmail.html', title='Edit Email', form=form, user=user)
+
 
 @app.route('/user/profile/password', methods=['GET', 'POST'])
 def editpassword():
@@ -456,6 +522,10 @@ def deleteaccount():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """
+    Manges the login for customer trying to login
+    Checks for the password and retieve the user profile for right user
+    """
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     form = LoginForm()
@@ -471,27 +541,54 @@ def login():
 
 @app.route('/logout')
 def logout():
+    """
+    Manges the logout response from user
+    Securely logs out the customer and redirects them to login page
+    """
     logout_user()
     return redirect(url_for('login'))
 
 
-@app.route('/getorder')
+@app.route('/order')
 @login_required
-def get_order():
+def order():
+    """
+    create order for checked out cart items
+    """
     if current_user.is_authenticated:
         customer_id = current_user.id
         invoice = secrets.token_hex(5)
-        updateshoppingcart
-        try:
-            order = CustomerOrder(invoice=invoice,customer_id=customer_id,orders=session['Cart'])
-            db.session.add(order)
-            db.session.commit()
-            session.pop('Cart')
-            flash('Your order has been sent successfully')
-            return redirect(url_for('orders',invoice=invoice))
-        except Exception as e:
-            print(e)
-            flash('Could not retrieve cart order. Try again')
-            return redirect(url_for('getCart'))
 
-#carts
+        order = CustomerOrder(invoice=invoice, customer_id=customer_id, orders=session['Cart'])
+        db.session.add(order)
+        db.session.commit()
+        session.pop('Cart')
+        return redirect(url_for('orders', invoice=invoice))
+
+
+@app.route('/orders/<invoice>')
+@login_required
+def orders(invoice):
+    """
+       Order page display for checked out items in cart
+    """
+    if current_user.is_authenticated:
+        grandTotal = 0
+        subtotal = 0
+        customer_id = current_user.id
+        customer = User.query.filter_by(id=customer_id).first()
+        orders = CustomerOrder.query.filter_by(customer_id=customer_id, invoice=invoice).order_by(
+            CustomerOrder.id.desc()).first()
+        for _key, product in orders.orders.items():
+            discount = (product['discount'] / 100) * float(product['price'])
+            subtotal += float(product['price']) * int(product['quantity'])
+            subtotal -= discount
+            sales_tax = ("%.2f" % (.09 * float(subtotal)))
+            g_total = ("%.2f" % (float(sales_tax) + float(subtotal)))
+
+
+
+    else:
+        return redirect(url_for('customerLogin'))
+    return render_template('orders.html', invoice=invoice, sales_tax=sales_tax, subtotal=subtotal, g_total=g_total,
+                           customer=customer, orders=orders)
