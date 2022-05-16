@@ -16,6 +16,14 @@
 
 <div class= "container">
 <h1>{{ product.name }}</h1>
+    <div>
+    {% if product.average_rating %}
+        Average Star Rating: {{ product.average_rating }}
+    {% endif %}
+    </div>
+    <div>
+        Number of Ratings: {{ product.review_numbers }}
+    </div>
     <div class="row">
         <div class="col-sm-3 mt-2">
             <div class="card-group">
@@ -46,8 +54,9 @@
         <div class="col-sm-3 mt-2">
             <div class="card">
                 <p class="card-body">
-                <p>{{ review.rating }} Stars</p>
                 <p> User: {{review.username}}</p>
+                <p>{{ review.rating }} Stars</p>
+                <p> Reviewed on: {{ review.created_date.strftime("%x") }}</p>
                 <p> Review: {{ review.review }}</p>
                 </p>
             </div>

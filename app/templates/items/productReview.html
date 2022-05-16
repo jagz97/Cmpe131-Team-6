@@ -6,10 +6,18 @@
 {% if messages %}
 
 {% for message in messages %}
-<li>{{ message }}</li>
+<div class="alert alert-primary" role="alert">
+  {{ message }}
+</div>
 {% endfor %}
 {% endif %}
 {% endwith %}
+
+{% for field, errors in form.errors.items() %}
+<div class="alert alert-primary" role="alert">
+    {{ form[field].label }}: {{ ', '.join(errors) }}
+</div>
+{% endfor %}
 
 <h1>{{ product.name }}</h1>
 

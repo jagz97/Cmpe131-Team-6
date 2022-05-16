@@ -1,3 +1,4 @@
+import datetime
 import secrets
 
 from flask import render_template, redirect, url_for, request, flash, session
@@ -6,8 +7,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import app as app
 from app import db, photos
-from app.forms import Products, LoginForm, SignUpForm, ReviewForm, EditUsernameForm, EditPasswordForm, EditEmailForm, \
-    AddressForm, MerchantSignup, MerchantLogin, EditUserProfileForm
+from app.forms import Products, LoginForm, SignUpForm, ReviewForm, MerchantSignup, MerchantLogin, EditUserProfileForm
 from app.helpers import seller_required
 from app.models import Brand, Category, AddProduct, User, Review, Merchant, CustomerOrder
 import stripe
@@ -138,7 +138,8 @@ def addproduct():
             return redirect(url_for('addproduct'))
 
         addprod = AddProduct(name=name, price=price, category_id=category, brand_id=brand, discount=discount,
-                             description=description, availablestock=availablestock, image=image, image_1=image_1,
+                             description=description, availablestock=availablestock, average_rating=None,
+                             review_numbers=0, image=image, image_1=image_1,
                              image_2=image_2, username=session['username'])
 
         db.session.add(addprod)
@@ -376,14 +377,26 @@ def review(product_id):
             if rating <= 5 and rating >= 0:
                 ## if there is no review, then add a review
                 if reviewExists:
+                    old_rating = review.rating
                     review.review = reviewdata
                     review.rating = rating
+                    review.created_date = datetime.now(tz=None)
+                    db.session.commit()
+                    average_rating = float((product.average_rating * product.review_numbers) - old_rating + rating)/product.review_numbers
+                    product.average_rating = average_rating
                     db.session.commit()
                     flash(f'Your review has been updated')
                 else:
                     newreview = Review(username=user.username, rating=rating, review=reviewdata, product_id=product_id)
                     db.session.add(newreview)
+                    product.review_numbers += 1
                     db.session.commit()
+                    if product.average_rating == None:
+                        product.average_rating = rating
+                    average_rating = float(product.average_rating*(product.review_numbers - 1) + rating) / product.review_numbers
+                    product.average_rating = average_rating
+                    db.session.commit()
+
                     flash(f'Your review has been added')
                 return redirect(url_for('productpage', product_id=product_id))
             else:
