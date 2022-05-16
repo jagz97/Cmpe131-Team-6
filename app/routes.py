@@ -7,7 +7,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from app import app as app
 from app import db, photos
 from app.forms import Products, LoginForm, SignUpForm, ReviewForm, EditUsernameForm, EditPasswordForm, EditEmailForm, \
-    AddressForm, MerchantSignup, MerchantLogin
+    AddressForm, MerchantSignup, MerchantLogin, EditUserProfileForm
 from app.helpers import seller_required
 from app.models import Brand, Category, AddProduct, User, Review, Merchant, CustomerOrder
 import stripe
@@ -392,82 +392,14 @@ def review(product_id):
         return redirect(url_for('login'))
     return render_template('items/productReview.html', title='Product Review', form=form, product=product)
 
-
-@app.route('/user/profile/username', methods=['GET', 'POST'])
-def editusername():
-    if current_user.is_authenticated:
-
-        user = current_user
-        form = EditUsernameForm(request.form)
-        if form.validate_on_submit():
-            new_username = form.username.data
-            try:
-                user.username = new_username
-                db.session.commit()
-                return redirect(url_for('userprofile'))
-            except Exception:
-                db.session.rollback()
-                flash('The username is taken')
-        if 'Cancel' in request.form:
-            return redirect(url_for('userprofile'))
-    else:
-        return redirect(url_for('login'))
-    return render_template('editUsername.html', title='Edit Username', form=form, user=user)
-
-
-@app.route('/user/profile/email', methods=['GET', 'POST'])
-def editemail():
+@app.route('/user/profile', methods=['GET', 'POST'])
+def userprofile():
     if current_user.is_authenticated:
         user = current_user
-        form = EditEmailForm(request.form)
+        form = EditUserProfileForm(request.form)
         if form.validate_on_submit():
-            new_email = form.email.data
-            try:
-                user.email = new_email
-                db.session.commit()
-                return redirect(url_for('userprofile'))
-            except Exception:
-                db.session.rollback()
-                flash('Email is already used')
-        if 'Cancel' in request.form:
-            return redirect(url_for('userprofile'))
-    else:
-        return redirect(url_for('login'))
-    return render_template('editEmail.html', title='Edit Email', form=form, user=user)
-
-
-@app.route('/user/profile/password', methods=['GET', 'POST'])
-def editpassword():
-    if current_user.is_authenticated:
-        user = current_user
-        form = EditPasswordForm(request.form)
-        if form.validate_on_submit():
-            current_password = form.current_password.data
-            confirm_current_password = form.confirm_current_password.data
-            new_password = form.new_password.data
-            new_password_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
-            if current_password == confirm_current_password:
-                if check_password_hash(user.password_hash, current_password):
-                    user.password_hash = new_password_hash
-                    db.session.commit()
-                    return redirect(url_for('userprofile'))
-                else:
-                    flash('The password is incorrect')
-            else:
-                flash('The two passwords do not match')
-        if 'Cancel' in request.form:
-            return redirect(url_for('userprofile'))
-    else:
-        return redirect(url_for('login'))
-    return render_template('editPassword.html', title='Edit Password', form=form, user=user)
-
-
-@app.route('/user/profile/address', methods=['GET', 'POST'])
-def editaddress():
-    if current_user.is_authenticated:
-        user = current_user
-        form = AddressForm(request.form)
-        if form.validate_on_submit():
+            user.username = form.username.data
+            user.email = form.email.data
             user.full_name = form.full_name.data
             user.address_line_one = form.address_line_one.data
             user.address_line_two = form.address_line_two.data
@@ -475,49 +407,47 @@ def editaddress():
             user.state_province_region = form.state_province_region.data
             user.zip_postal_code = form.zip_postal_code.data
             user.country = form.country.data
-            db.session.commit()
-            return redirect(url_for('userprofile'))
-        if 'Cancel' in request.form:
-            return redirect(url_for('userprofile'))
+            current_password = form.current_password.data
+            new_password = form.new_password.data
+            confirm_new_password = form.confirm_new_password.data
+            new_password_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
+            if current_password != "" and new_password != "" and confirm_new_password != "":
+                if new_password == confirm_new_password:
+                    if check_password_hash(user.password_hash, current_password):
+                        user.password_hash = new_password_hash
+                        try:
+                            db.session.commit()
+                        except Exception:
+                            db.session.rollback()
+                            flash('Email and/or Username is already used')
+                    else:
+                        flash('The password is incorrect')
+                else:
+                    flash('The two passwords do not match')
+            elif not (current_password == "" and new_password == "" and confirm_new_password == ""):
+                flash('There is an empty password field')
+            else:
+                try:
+                    db.session.commit()
+                except Exception:
+                    db.session.rollback()
+                    flash('Email and/or Username is already used')
     else:
         return redirect(url_for('login'))
-    return render_template('editAddress.html', title='Edit Address', form=form, user=user)
+    return render_template('userProfile.html', title='User Profile', user=user, form=form)
 
 
-@app.route('/user/profile', methods=['GET', 'POST'])
-def userprofile():
-    if current_user.is_authenticated:
-        user = current_user
-        if 'Edit Username' in request.form:
-            return redirect(url_for('editusername'))
-        if 'Edit Email' in request.form:
-            return redirect(url_for('editemail'))
-        if 'Edit Password' in request.form:
-            return redirect(url_for('editpassword'))
-        if 'Edit Address' in request.form:
-            return redirect(url_for('editaddress'))
-        if 'Delete Account' in request.form:
-            return redirect(url_for('deleteaccount'))
-    else:
-        return redirect(url_for('login'))
-    return render_template('userProfile.html', title='User Profile', user=user)
-
-
-@app.route('/user/delete', methods=['GET', 'POST'])
+@app.route('/user/delete/confirm', methods=['GET', 'POST'])
 def deleteaccount():
     if current_user.is_authenticated:
         user = current_user
-        if 'Yes' in request.form:
-            username = user.username
-            db.session.delete(user)
-            db.session.commit()
-            flash('User {} has been deleted'.format(username))
-            return redirect(url_for('home'))
-        if 'No' in request.form:
-            return redirect(url_for('login'))
+        username = user.username
+        db.session.delete(user)
+        db.session.commit()
+        flash('User {} has been deleted'.format(username))
+        return redirect(url_for('home'))
     else:
         return redirect(url_for('login'))
-    return render_template('deleteAccount.html', title='Delete Account', user=user)
 
 
 @app.route('/login', methods=['GET', 'POST'])

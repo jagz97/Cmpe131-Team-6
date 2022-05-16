@@ -63,6 +63,21 @@ class ReviewForm(FlaskForm):
     submit = SubmitField('Add rating')
 
 
+class EditUserProfileForm(FlaskForm):
+    full_name = StringField('Full Name', validators=[DataRequired()])
+    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired()])
+    address_line_one = StringField('Address Line 1', validators=[DataRequired()])
+    address_line_two = StringField('Address Line 2')
+    city = StringField('City', validators=[DataRequired()])
+    state_province_region = StringField('State/Province/Region', validators=[DataRequired()])
+    zip_postal_code = StringField('ZIP/Postal Code', validators=[DataRequired()])
+    country = StringField('Country', validators=[DataRequired()])
+    current_password = PasswordField('Old Password')
+    new_password = PasswordField('New Password')
+    confirm_new_password = PasswordField('Confirm Password')
+    submit = SubmitField('Save Changes')
+
 class EditUsernameForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     submit = SubmitField('Edit Username')
