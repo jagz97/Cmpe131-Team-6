@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-    <div class ="col-md-12">
+<div class= "container">
+    <div class ="card" style="outline-color: #1a1e21">
+        <h1>Invoice</h1>
     Order id: {{ orders.invoice }}
         <br>
     Email: {{ customer.email }}
@@ -10,59 +11,49 @@
     Address: {{ full_name }}
 
     {{ customer.address_line_one }}
-    <br>
+        <br>
     {{ customer.address_line_two }}
-    <br>
+        <br>
     {{ customer.city }},
     {{ customer.state_province_region }}
-    <br>
+        <br>
     {{ customer.zip_postal_code }},{{ customer.country }}
-
     </div>
-<div class= "container">
-    <table class="table table-sm">
+
+    <table class="table table-sm" style="margin-top: 20px">
         <thead>
         <td>Item</td>
         <td>Name</td>
         <td>Price</td>
         <td>Quantity</td>
-
         <td>Discount</td>
         <td>Subtotal</td>
-
-
         </thead>
 
         <tbody>
         {% for key,product in orders.orders.items() %}
             <tr>
-
                 <td>{{loop.index}}</td>
                 <td>{{product.name}}</td>
                 <td>${{product.price}}</td>
                 <td>{{product.quantity}}</td>
+
             {% set discount = "%0.2f" |format((product.discount/100) * product.price|float) %}
+
                 {% if product.discount > 0 %}
                     <td>{{product.discount}}% </td>
+
                 {% else %}
                     <td> </td>
 
                 {% endif%}
 
-
                 {% set total =  product.price|float  * product.quantity|float  %}
                 <td>{{ "%0.2f"| format((total|float)-discount|float)}}
                 </td>
                 <td></td>
-
-
             </tr>
-
         {% endfor %}
-
-
-
-
         </tbody>
 
     </table>
@@ -72,8 +63,8 @@
 <p>{{ sales_tax }}</p>
 
 <h4>Total Due:</h4>
-
         <p>  ${{ g_total }} </p>
+
 <form action="{{url_for('payment')}}" method="POST">
     {% set amount = g_total.replace('.','')%}
     <input type="hidden" name="amount" value="{{ amount }}">
