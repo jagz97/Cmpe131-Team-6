@@ -2,8 +2,6 @@
 
 {% block content %}
 
-
-<h1>Sign Up</h1>
     {% with messages = get_flashed_messages() %}
         {% if messages %}
 
@@ -13,50 +11,122 @@
         {% endif %}
         {% endwith %}
 
-    <form action="" method="post" novalidate>
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.email.label }}<br>
-            {{ form.email(size=32) }}
-        </p>
-        <p>
-            {{ form.username.label }}<br>
-            {{ form.username(size=32) }}
-        </p>
-        <p>
-            {{ form.password.label }}<br>
-            {{ form.password(size=32) }}
-        </p>
-        <p>
-            {{ form.full_name.label }}<br>
-            {{ form.full_name(size=32) }}
-        </p>
-        <p>
-            {{ form.address_line_one.label }}<br>
-            {{ form.address_line_one(size=32) }}
-        </p>
-        <p>
-            {{ form.address_line_two.label }}<br>
-            {{ form.address_line_two(size=32) }}
-        </p>
-        <p>
-            {{ form.city.label }}<br>
-            {{ form.city(size=32) }}
-        </p>
-        <p>
-            {{ form.state_province_region.label }}<br>
-            {{ form.state_province_region(size=32) }}
-        </p>
-        <p>
-            {{ form.zip_postal_code.label }}<br>
-            {{ form.zip_postal_code(size=32) }}
-        </p>
-        <p>
-            {{ form.country.label }}<br>
-            {{ form.country(size=32) }}
-        </p>
-        <p>{{ form.submit() }}</p>
-    </form>
+<head>
+    <link rel="stylesheet" type="text/css" href="static/css/signUp.css">
+</head>
+<form action="" method="post" novalidate>
+{{ form.hidden_tag() }}
+<section class="h-100 h-custom gradient-custom-2">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-12">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <div class="card card-registration card-registration-2" style="border-radius: 15px;">
+          <div class="card-body p-0">
+            <div class="row g-0">
+              <div class="col-lg-6">
+                <div class="p-5">
+                  <h3 class="fw-normal mb-5" style="color: #4835d4;">Sign Up</h3>
+
+                    <div class="mb-4 pb-2">
+                      <div class="form-outline">
+                          {{ form.full_name(class="form-control form-control-lg") }}
+                          {{ form.full_name.label(class="form-label") }}
+                      </div>
+                    </div>
+
+                  <div class="mb-4 pb-2">
+                    <div class="form-outline">
+                        {{ form.email(class="form-control form-control-lg") }}
+                        {{ form.email.label(class="form-label") }}
+                    </div>
+                  </div>
+
+                  <div class="mb-4 pb-2">
+                    <div class="form-outline">
+                        {{ form.username(class="form-control form-control-lg") }}
+                        {{ form.username.label(class="form-label") }}
+                    </div>
+                  </div>
+
+                    <div class="mb-4 pb-2">
+                    <div class="form-outline">
+                        {{ form.password(class="form-control form-control-lg") }}
+                        {{ form.password.label(class="form-label") }}
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              <div class="col-lg-6 bg-indigo text-white">
+                <div class="p-5">
+                  <h3 class="fw-normal mb-5">Address</h3>
+
+                  <div class="mb-4 pb-2">
+                    <div class="form-outline form-white">
+                        {{ form.address_line_one(class="form-control form-control-lg") }}
+                        {{ form.address_line_one.label(class="form-label") }}
+                    </div>
+                  </div>
+
+                  <div class="mb-4 pb-2">
+                    <div class="form-outline form-white">
+                        {{ form.address_line_two(class="form-control form-control-lg") }}
+                        {{ form.address_line_two.label(class="form-label") }}
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-5 mb-4 pb-2">
+
+                      <div class="form-outline form-white">
+                        {{ form.zip_postal_code(class="form-control form-control-lg") }}
+                        {{ form.zip_postal_code.label(class="form-label") }}
+                      </div>
+
+                    </div>
+                    <div class="col-md-7 mb-4 pb-2">
+
+                      <div class="form-outline form-white">
+                        {{ form.city(class="form-control form-control-lg") }}
+                        {{ form.city.label(class="form-label") }}
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <div class="mb-4 pb-2">
+                    <div class="form-outline form-white">
+                        {{ form.country(class="form-control form-control-lg") }}
+                        {{ form.country.label(class="form-label") }}
+                    </div>
+                  </div>
+
+                  <div class="mb-4">
+                    <div class="form-outline form-white">
+                        {{ form.state_province_region(class="form-control form-control-lg") }}
+                        {{ form.state_province_region.label(class="form-label") }}
+                    </div>
+                  </div>
+                    {{ form.submit(class="btn btn-light btn-lg") }}
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</form>
 
 
 {% endblock content %}
