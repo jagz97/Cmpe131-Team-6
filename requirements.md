@@ -24,6 +24,11 @@
 ## Use Cases
 
 1. Add to cart
+
+- **Summary:** Before buying an item, a user must be able to add an item to a cart and then they are able to buy their item. This function, add to cart, makes it so the user can add the item to their cart. 
+
+- **Actors:** The user looking to add an item they are interested into a cart
+
 - **Pre-condition:** User is looking at an item/product and if they decide they want save the item for purchase
 
 - **Trigger:** The user clicks a button and the item will be added to their personalized cart
@@ -57,6 +62,10 @@
   7. Item is aded to cart
 
 2. Buy Items
+
+- **Summary:** A user that is looking to buy an item would run through this function, adding in their payment information and checking out would bring them to a confirmation screen. 
+
+-**Actors:** The users looking to purchase an item in their cart.
 
 - **Pre-condition:** User has item added into cart and is ready to purchase (meaning that the user already has an account"
 
