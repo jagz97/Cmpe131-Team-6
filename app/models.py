@@ -6,11 +6,12 @@ from app import login
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
 
+
 # Source Code: Simple Relations https://flask-sqlalchemy.palletsprojects.com/en/2.x/quickstart/
 
 
 class AddProduct(db.Model):
-    __searchable__= ['name','description']
+    __searchable__ = ['name', 'description']
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(1000), nullable=False)
@@ -20,6 +21,8 @@ class AddProduct(db.Model):
     availablestock = db.Column(db.Integer, nullable=False)
     pub_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     username = db.Column(db.String(32), nullable=False)
+    average_rating = db.Column(db.Float, nullable=True)
+    review_numbers = db.Column(db.Integer, nullable=False)
     reviews = db.relationship('Review', backref=db.backref('add_product', lazy=True))
 
     category_id = db.Column(db.Integer, db.ForeignKey(
@@ -62,7 +65,7 @@ class AddBiddableItem(db.Model):
     def __repr__(self):
         return '<AddBiddableItem %r>' % self.name
 
-class Brand (db.Model):
+class Brand(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), nullable=False, unique=True)
 
@@ -90,59 +93,67 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-    
+
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
 
-class Review( db.Model):
+class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), index=True, nullable=False)
     rating = db.Column(db.Integer, nullable=False)
     review = db.Column(db.Text)
+    created_date = db.Column(db.DateTime, default=datetime.now(tz=None))
     product_id = db.Column(db.Integer, db.ForeignKey('add_product.id'), nullable=False)
+
 
 class Merchant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     fullname = db.Column(db.String(32), nullable=False)
     username = db.Column(db.String(32), unique=True, nullable=False)
-    password =db.Column(db.String(250), nullable=False)
+    password = db.Column(db.String(250), nullable=False)
 
     def __repr__(self):
-         return '<Name %r>' % self.name
+        return '<Name %r>' % self.name
 
 
 """
 Jsonify the cart items and dumb the value to store cart
 """
+
+
 class JsonEcodedDict(db.TypeDecorator):
     impl = db.Text
+
     def process_bind_param(self, value, dialect):
         if value is None:
             return '{}'
         else:
             return json.dumps(value)
+
     def process_result_value(self, value, dialect):
         if value is None:
             return {}
         else:
             return json.loads(value)
 
+
 class CustomerOrder(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     invoice = db.Column(db.String(20), unique=True, nullable=False)
     status = db.Column(db.String(20), default='Pending', nullable=False)
-    customer_id = db.Column(db.Integer, unique=False, nullable=False) # unique false since cutomer car have more than one orders
+    customer_id = db.Column(db.Integer, unique=False,
+                            nullable=False)  # unique false since cutomer car have more than one orders
     date_created = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    orders = db.Column(JsonEcodedDict) 
+    orders = db.Column(JsonEcodedDict)
 
     def __repr__(self):
-        return'<CustomerOrder %r>' % self.invoice
-
+        return '<CustomerOrder %r>' % self.invoice
 
 
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
 
 db.create_all()

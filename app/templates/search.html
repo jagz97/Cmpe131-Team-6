@@ -20,8 +20,14 @@
                 <p clas="text-center">Price ${{product.price}}</p>
                 </p>
                 <div class="card-footer">
-                    <a href="#" class=" float-left btn btn-sm ">details</a>
-                    <a href="#" class="float-right btn btn-sm ">Add to Cart</a>
+                    <form class="form-group" action="{{url_for('AddCart')}}" method="post">
+                    <div class="form-col align-items-center">
+                    <input type="hidden" name="product_id" value="{{product.id}}">
+                            <input class="form-control" type="number" name ="quantity" id="" value="1" min="1" max="{{product.availablestock}}">
+                            <button type="submit" class="btn btn-warning mt-4 text-white"> <i class="icon-cart-add mr-2"></i> Add to cart</button>
+                        <button type="button" class="btn btn-warning mt-4 text-white" onclick="location.href = '/product/{{ product.id }}';">Details</button>
+                    </div>
+                    </form>
                 </div>
 
 

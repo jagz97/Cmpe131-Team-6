@@ -1,69 +1,128 @@
 {% extends 'base.html' %}
 {% block content %}
 
+
+<body>
+
 {% with messages = get_flashed_messages() %}
-{% if messages %}
+        {% if messages %}
 
-{% for message in messages %}
-<li>{{ message }}</li>
-{% endfor %}
-{% endif %}
-{% endwith %}
+        {% for message in messages %}
+          <div class="alert alert-success" role="alert">
+              {{ message }}
+          </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+	<section class="header-section">
+		<div class="header" id="topheader">
+
+		<div id="demo" class="carousel slide" data-ride="carousel">
+
+			<!-- Indicators -->
+			<ul class="carousel-indicators">
+				<li data-target="#demo" data-slide-to="0" class="active"></li>
+				<li data-target="#demo" data-slide-to="1"></li>
+				<li data-target="#demo" data-slide-to="2"></li>
+			</ul>
+
+			<!-- The slideshow -->
+			<div class="carousel-inner">
+
+				<div class="carousel-item active">
+					<img src="static/img/ct1.jpg" class="img-fluid" alt="Responsive image">
+
+					<div class="center-div">
+						<h1 class> Buyers meets Sellers. </h1>
+						<p class>We bring both sides of the string together.</p>
+						<div class="header-buttons">
+							<a href="{{ url_for('signup_merchant') }}">Seller Sign up</a>
+							<a href="{{ url_for('signup')}}">Buyer Sign up</a>
+						</div>
+					</div>
+				</div>
+				<div class="carousel-item">
+					<img src="static/img/c2.jpg" class="img-fluid" alt="Responsive image">
+					<div class="center-div">
+						<h1 class> Start Shopping With Us Now </h1>
+						<p class>  Freely Explore our products. Create your account now or later at checkout.</p>
+						<div class="header-buttons">
+							<a href="{{ url_for('login') }}">Login</a>
+							<a href="{{ url_for('signup')}}">Signup</a>
+						</div>
+					</div>
+
+				</div>
+				<div class="carousel-item">
+					<img src="static/img/c5.jpg" class="img-fluid" alt="Responsive image">
+					<div class="center-div">
+						<h1 class> Start Selling with Us Now</h1>
+						<p class> Either you're a small business or large scale seller. We're here for you.</p>
+						<div class="header-buttons">
+							<a href="{{ url_for('signup_merchant') }}"> Sign up</a>
+							<a href="{{ url_for('login_merchant') }}">Login</a>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<!-- Left and right controls -->
+			<a class="carousel-control-prev" href="#demo" data-slide="prev">
+				<span class="carousel-control-prev-icon"></span>
+			</a>
+			<a class="carousel-control-next" href="#demo" data-slide="next">
+				<span class="carousel-control-next-icon"></span>
+			</a>
+
+		</div>
+	</div>
 
 
-{% if current_user.is_anonymous %}
-    <h1>Customer</h1>
-<a href="{{ url_for('login') }}">Login</a>
-    
-New User?
-    <a href="{{ url_for('signup')}}">Register</a>
-    {% else %}
+</section>
 
-    <h1>Hi, {{ current_user.username }}!</h1>
-    <a href="{{url_for('userprofile')}}">Profile</a>
-    <a href="{{ url_for('logout') }}">Logout</a>
-   
-    {% endif %}
-
-<h1>Are you a seller</h1>
-<a href="{{ url_for('signup_merchant') }} ">Sign Up/Login Here</a>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js"></script>
+    <script src="jquery.counterup.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 
+<section>
 
 <div>
-    <div class="row">
-        {% for product in products %}
-        <div class="col-sm-3 mt-2">
-            <div class="card">
+    <div class="row" style="margin-top: 20px;">
 
+        {% for product in products %}
+        <div class="col-sm-6 col-md-4 col-lg-4 col-xl-3" >
+            <div class="card" style="width: 18rem; ">
                 <img src="{{url_for('static', filename='img/' + product.image_1)}}" alt="{{product.name}}"
                     class="card-img-top" height="250">
-                <p class="card-body">
+
                 {% if product.discount > 0 %}
-            {{ product.discount }}% Off</p>
+            <p2 class="animate-charcter">{{ product.discount }}% Off</p2>
                 {% endif %}
-                {{product.name}}
-                <p clas="text-center">Price ${{product.price}}
-                </p>
+
+                <p3>{{product.name}}</p3>
+                <p3 class="text-start">Price ${{product.price}}</p3>
                 <div class="card-footer">
-                    <a href="/product/{{product.id}}" class=" float-left btn btn-sm btn-primary " float-left>Product details</a>
+                    <a href="/product/{{product.id}}" class=" float-end btn btn-sm btn-dark " float-left>Product details</a>
                     <form action="{{url_for('AddCart')}}" method="post">
                         <input type="hidden" name="product_id" value="{{product.id}}">
+                        <p>Quantity:</p>
                         <input type="number" name ="quantity" id="" value="1" min="1" max="{{product.availablestock}}">
-
-                        <button type="submit" class="btn btn-sm btn-primary" btn-warning float-right> Add to Cart</button>
-
-
+                        <button type="submit" class="float-end btn btn-sm btn-dark" btn-warning float-right> Add to Cart</button>
                     </form>
-
-
                 </div>
-
             </div>
         </div>
         {% endfor %}
+
     </div>
 </div>
+</section>
+    </body>
 
 
 {% endblock content %}

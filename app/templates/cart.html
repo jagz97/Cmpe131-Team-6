@@ -1,44 +1,64 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class= "container">
-    <div class="row">
-        <table class="table table-sm">
-            <thead>
-                <td>Item</td>
-                <td>Name</td>
-                <td>Price</td>
-                <td>Quantity</td>
 
-                <td>Discount</td>
-                <td>Subtotal</td>
-                <td>Update</td>
-                <td>remove</td>
-        
-            </thead>
-            <tbody>
-            {% for key,product in session['Cart'].items() %}  
+    <link rel="stylesheet" type="text/css" href="static/css/home.css">
+<div class= "container">
+    <table class="table table-sm">
+        <thead>
+        <td>Item</td>
+        <td>Name</td>
+        <td>Price</td>
+        <td>Quantity</td>
+
+        <td>Discount</td>
+        <td>Subtotal</td>
+        <td>remove</td>
+
+        </thead>
+
+        <tbody>
+        {% for key,product in session['Cart'].items() %}
             <tr>
+
                 <td>{{loop.index}}</td>
                 <td>{{product.name}}</td>
                 <td>${{product.price}}</td>
                 <td>{{product.quantity}}</td>
+            {% set discount = "%0.2f" |format((product.discount/100) * product.price|float )%}
                 {% if product.discount > 0 %}
-                <td>{{product.discount}}%</td>
+                    <td>{{product.discount}}% </td>
                 {% else %}
-                <td> </td>
+                    <td> </td>
+
                 {% endif%}
-                <td>{{product.Subtotal}}</td>
-                <td><a href="#">Update</a></td>
-                <td><a href="#">Delete</a></td>
-                
+
+
+                {% set total =  product.price|float  * product.quantity|float  %}
+                <td>{{ "%0.2f"| format((total|float)-discount|float)}}
+                </td>
+                <td><a href="{{ url_for('remove', id=key) }}" class="btn-dark"> remove</a></td>
+                <td></td>
+
 
             </tr>
-            {% endfor %}
 
-            </tbody>
-            
-        </table>
-        
-   {{session['Cart']}}     
+        {% endfor %}
+
+
+
+
+        </tbody>
+
+    </table>
+<a href="{{ url_for('clear') }}" class="btn-outline-warning"> Clear Cart</a>
+<a href="{{ url_for('order') }}"> Checkout</a>
+<h4>Tax Charged:</h4>
+<p>{{ sales_tax }}</p>
+
+<h4>Total Due:</h4>
+
+        <p>  ${{ g_total }} </p>
+
+</div>
 
 {% endblock content %}
