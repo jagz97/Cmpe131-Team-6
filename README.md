@@ -38,11 +38,13 @@ To install all required dependencies, type this command inside the project direc
 On terminal after sucessfully cloning the repository navigate to the project directory:
 - Make virtual environment using python3:
 
+```linux
+$ python3 -m venv venv
+```  
     
-    $ python3 -m venv venv
 
 - Activate the virtual environment:
-```
+```linux
 $ . venv/bin/activate
 ```
 
@@ -57,7 +59,7 @@ $ pip install -r requirements.txt
 - Navigate to the project directory. 
 - Type this command into your terminal:
 ``` 
-    $ python3 run.py
+$ python3 run.py
 ```
 - Once the app starts running, it can be accessed from the local host which is available at url for local host http://127.0.0.1:5000/
 
@@ -198,6 +200,7 @@ def payment():
 - Customers can check out the items in cart and buy items using Stripe API `orders/<order_id>` (Jagjit Singh)
 - Users Land on Splash at `/` where they can signup to subscribe for newsletter using MailGun api (Jagjit Singh)
 - Customer can see all items added by all sellers at `/home` (Jagjit Singh)
+  - Bootstrap, CSS on splash page`/`, homepage `/home`, merchant, cart (Jagjit Singh)
 
 # Cmpe131 Team 6
 - Hector Saldivar (@HectorSal) Team Lead
