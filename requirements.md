@@ -132,7 +132,7 @@
 
 5. Splash Page
 
--**Summary**: A user visiting the web store will be prompted with a welcome window to choose region and language.
+-**Summary**: A user visiting the web store will be prompted with a welcome window to signup for newsletter.
 
 -**Actors**: The user visiting the web store
 
@@ -146,24 +146,22 @@
 - **Primary Sequence:**
   
   1. System loads the welcome window.
-  2. System displays two options to choose from; select country/region and language.
-  3. User selects the desired region/country and chooses the desired language.
-  4. User sumbits the request by pressing go button.
-  5. System switches the language to desired language selected by the user.
+  2. System displays a newsletter signup form.
+  3. User enters a valid email address.
+  4. User sumbit the request by pressing subscribe button.
+  5. System adds user to the newsletter mailing list.
   6. System loads and displays the homepage.
-  6. User is presented with the homepage in the selcted language.
+  6. User is presented with the homepage of website.
 
 - **Primary Postconditions:** 
-  The user gets displayed with the homepage in the selected language.
-  OR
-  The user gets displayed with homepage in the default language. 
+  The user gets redirected to the homepage of the store.
+  
 
 - **Alternate Sequence:** 
   
-  1. The user does not speficy/select a language and presses the close button.
-  2. System automatically selects the default language.
+  1. The user does not specify/select a language and presses continue to store.
   3. System loads and displays the homepage.
-  3. User is presented with homepage in default language.
+  3. User is presented with homepage of website.
  
 6. Find Items
 
