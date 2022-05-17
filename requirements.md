@@ -13,6 +13,8 @@
 10. Splash Page (Jagjit)
 11. Find Items (Jagjit)
 12. Buy item (Nicholas)
+13. View all listed items (Jagjit)
+14. Mailgun Api (Jagjit)
 
 ## Non-functional Requirements
 

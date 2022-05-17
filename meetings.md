@@ -50,3 +50,14 @@ Team Updates:
 - Hector and Jagjit will finish the gantt chart, README.md, and mkdocs
 Summarize group progress:
 - 10 use cases are finished
+
+### 2022-05-16 at 17:40
+Who attended
+-Jagjit, Hector, Nicholas
+Team Updates:
+- Jagjit finished stripes api implementation, checkout, splash page, bootstrap, view items from all sellers, mailgun api
+- Hector finished adding bootstrap to login, sign up, user profile, delete account, and product page + reviews
+- Nicholas worked on biding items use case.
+Summarize group progress:
+- 14 use cases are finished
+- Bootstraps is added on every page of the website
