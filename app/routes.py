@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import secrets
 
 from flask import render_template, redirect, url_for, request, flash, session
@@ -345,65 +345,70 @@ def signup():
 
 @app.route('/product/<product_id>', methods=['GET', 'POST'])
 def productpage(product_id):
+    user = None
+    form = ReviewForm(request.form)
     product = AddProduct.query.get(product_id)
-    reviews = product.reviews
-    if 'Rate Product' in request.form:
-        if current_user.is_authenticated:  # if user is logged in, route to review page, otherwise, route to login page
-            return redirect(url_for('review', product_id=product_id))
-        return redirect(url_for('login'))
-    return render_template('items/productDetails.html', title='Product Details', product=product, reviews=reviews)
-
-
-@app.route('/product/review/<product_id>', methods=['GET', 'POST'])
-def review(product_id):
-    product = AddProduct.query.get(product_id)
-    if product == None:
-        return redirect(url_for('home'))
     if current_user.is_authenticated:
-        # if the cancel button is pressed, then route to the product page
-        form = ReviewForm(request.form)
-        if 'Cancel Review' in request.form:
-            return redirect(url_for('productpage', product_id=product_id))
-            # if a user is logged in and has selected a product to review, then the review is added
-        if form.validate_on_submit():
-            user = current_user
-            reviewExists = False
-            # get the old review object if it exists
-            review = Review.query.filter(Review.username == user.username and Review.product_id == product_id).first()
-            if review != None:
-                reviewExists = True
-            rating = form.rating.data
-            reviewdata = form.review.data
-            if rating <= 5 and rating >= 0:
-                ## if there is no review, then add a review
-                if reviewExists:
-                    old_rating = review.rating
-                    review.review = reviewdata
-                    review.rating = rating
-                    review.created_date = datetime.now(tz=None)
-                    db.session.commit()
-                    average_rating = float((product.average_rating * product.review_numbers) - old_rating + rating)/product.review_numbers
-                    product.average_rating = average_rating
-                    db.session.commit()
-                    flash(f'Your review has been updated')
-                else:
-                    newreview = Review(username=user.username, rating=rating, review=reviewdata, product_id=product_id)
-                    db.session.add(newreview)
-                    product.review_numbers += 1
-                    db.session.commit()
-                    if product.average_rating == None:
-                        product.average_rating = rating
-                    average_rating = float(product.average_rating*(product.review_numbers - 1) + rating) / product.review_numbers
-                    product.average_rating = average_rating
-                    db.session.commit()
-
-                    flash(f'Your review has been added')
-                return redirect(url_for('productpage', product_id=product_id))
+        user = current_user
+    if form.validate_on_submit():
+        reviewExists = False
+        # get the old review object if it exists
+        review = Review.query.filter(Review.username == user.username and Review.product_id == product_id).first()
+        if review != None:
+            reviewExists = True
+        rating = form.rating.data
+        reviewdata = form.review.data
+        if rating <= 5 and rating >= 0:
+            ## if there is no review, then add a review
+            if reviewExists:
+                old_rating = review.rating
+                review.review = reviewdata
+                review.rating = rating
+                review.created_date = datetime.now(tz=None)
+                db.session.commit()
+                average_rating = float(
+                    (product.average_rating * product.review_numbers) - old_rating + rating) / product.review_numbers
+                product.average_rating = average_rating
+                db.session.commit()
+                flash(f'Your review has been updated')
             else:
-                flash('Rating must be from 0-5 stars')
-    else:
-        return redirect(url_for('login'))
-    return render_template('items/productReview.html', title='Product Review', form=form, product=product)
+                newreview = Review(username=user.username, rating=rating, review=reviewdata, product_id=product_id)
+                db.session.add(newreview)
+                product.review_numbers += 1
+                db.session.commit()
+                if product.average_rating == None:
+                    product.average_rating = rating
+                average_rating = float(
+                    product.average_rating * (product.review_numbers - 1) + rating) / product.review_numbers
+                product.average_rating = average_rating
+                db.session.commit()
+
+                flash(f'Your review has been added')
+        else:
+            flash('Rating must be from 0-5 stars')
+    reviews = product.reviews
+    zero_star = 0
+    one_star = 0
+    two_star = 0
+    three_star = 0
+    four_star = 0
+    five_star = 0
+    for review in reviews:
+        if (review.rating == 0):
+            zero_star += 1
+        elif (review.rating == 1):
+            one_star += 1
+        elif (review.rating == 2):
+            two_star += 1
+        elif (review.rating == 3):
+            three_star += 1
+        elif (review.rating == 4):
+            four_star += 1
+        elif (review.rating == 5):
+            five_star += 1
+    return render_template('items/productDetails.html', title='Product Details', product=product, reviews=reviews,
+                           zero_star=zero_star, one_star=one_star, two_star=two_star, three_star=three_star,
+                           four_star=four_star, five_star=five_star, form=form, user=user)
 
 @app.route('/user/profile', methods=['GET', 'POST'])
 def userprofile():

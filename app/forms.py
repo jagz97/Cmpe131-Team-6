@@ -49,7 +49,7 @@ class SignUpForm(FlaskForm):
 
 class ReviewForm(FlaskForm):
     rating = IntegerField('# of Stars',[validators.InputRequired("You got to enter some rating!")])
-    review = StringField('Enter review')
+    review = TextAreaField('Enter review')
     submit = SubmitField('Add rating')
 
 
