@@ -2,8 +2,8 @@ from app import app as app
 from app import db, photos, search
 from unicodedata import category
 from flask import render_template, redirect, url_for, request, flash, session, current_app
-from app.forms import Products, LoginForm, SignUpForm, ReviewForm, EditUsernameForm, EditPasswordForm, EditEmailForm, AddressForm, SearchForm, MerchantSignup, MerchantLogin
-from app.models import Brand, Category, AddProduct, User, Review, Merchant, CustomerOrder
+from app.forms import Products, BidItem, LoginForm, SignUpForm, ReviewForm, EditUsernameForm, EditPasswordForm, EditEmailForm, AddressForm, SearchForm, MerchantSignup, MerchantLogin
+from app.models import AddBiddableItem, Brand, Category, AddProduct, User, Review, Merchant, CustomerOrder
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import update
 from flask_wtf import FlaskForm
@@ -95,6 +95,46 @@ def addproduct():
         return render_template('items/product.html', title='title', form=form, brands=brands, categories=categories, rows = rows )
     rows = AddProduct.query.filter_by(username=session['username'])
     return render_template('items/product.html', title='title', form=form, brands=brands, categories=categories, rows = rows)
+
+@app.route('/addbiddableitem', methods=['GET', 'POST'])
+@seller_required
+def addbiddableitem():
+    #brands = Brand.query.all()
+    #categories = Category.query.all()
+    form = BidItem(request.form)
+    if request.method == 'POST':
+        name = form.name.data
+        price = form.price.data
+        #brand = request.form.get('brand')
+        #category = request.form.get('category')
+        
+        try:
+            # receiving photo from form
+            image = photos.save(request.files.get('image'))
+            # receiving photo1 from form
+            image_1 = photos.save(request.files.get('image_1'))
+         # receiving photo2 from form
+            image_2 = photos.save(request.files.get('image_2'))
+        except Exception:
+            flash(f'Files need to be photos only. Supported type: jpg, jpeg, png, gif')
+            return redirect(url_for('addbiddableitem'))
+
+        addbiditem = AddBiddableItem(name=name, price=price, 
+            #category_id=category, brand_id=brand, 
+            image=image, image_1=image_1, image_2=image_2,username= session['username'])
+
+        db.session.add(addbiditem)
+        # if form is successfully submitted show success message
+        flash(f'Biddable Item {form.name.data} has been added')
+        db.session.commit()
+        rows = AddBiddableItem.query.filter_by(username=session['username'])
+        return render_template('items/biddableitem.html', title='title', 
+            #form=form, brands=brands, categories=categories, 
+            rows = rows )
+    rows = AddBiddableItem.query.filter_by(username=session['username'])
+    return render_template('items/biddableitem.html', title='title', form=form, 
+        #brands=brands, categories=categories, 
+        rows = rows)
 
 
 #merchant signup

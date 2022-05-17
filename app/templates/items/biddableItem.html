@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <h1>Add Biddable Items</h1>
+    <a href="{{ url_for('logut_merchant')}} ">logut</a>
+    <form enctype=multipart/form-data action="{{ url_for('addbiddableitem') }}" method="POST">
+        {{form.hidden_tag()}}
+        <p>
+            {{ form.name.label }}
+            {{ form.name(size=32) }}
+
+        </p>
+
+        <p>
+            {{ form.description.label }}
+            {{ form.description() }}
+
+        </p>
+
+        <p>
+            {{ form.price.label }}
+            {{ form.price(size=32) }}
+
+        </p>
+
+
+        <!--
+        <p>
+            <label for="category">Add a Category</label>
+            <select name="category" id="category" required>
+                <option value="">Pick category</option>
+                {% for i in categories %}
+                <option value="category.id"> {{i.name}} </option>
+                {% endfor %}
+        
+            </select>
+
+            <a href="{{ url_for('addcategory') }}" class="link-primary">Add Category</a>
+
+        </p>
+
+        <p>
+            <label for="brand">Add a Brand</label>
+            <select name="brand" id="brand" required>
+                <option value="">Pick Brand</option>
+                {% for i in brands %}
+                <option value="brand.id"> {{i.name}} </option>
+                {% endfor %}
+            </select>
+
+            <a href="{{ url_for('addbrand') }}" class="link-primary">Add Brand</a>
+        </p>
+        -->
+        {{ form.image }}
+        {{ form.image_1 }}
+        {{ form.image_2 }}
+
+
+        <p>
+
+        </p>
+
+        <p>
+            {{ form.submit() }}
+        </p>
+    </form>
+</div>
+
+
+<div>
+    <div class="row">
+        {% for row in rows %}
+        <div class="col-sm-3 mt-2">
+            <div class="card">
+
+                <img src="{{url_for('static', filename='img/' + row.image_1)}}" alt="{{row.name}}"
+                    class="card-img-top" height="300">
+                <p class="card-body">
+                {% endif %}
+                <p class="text-center">{{row.name}}</p>
+                <p clas="text-center">Inital Bid Price ${{row.price}}</p>
+                </p>
+                <div class="card-footer">
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
