@@ -1,7 +1,8 @@
 
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField, FileRequired
-from wtforms import Form, SubmitField, StringField, IntegerField, TextAreaField, SelectField, PasswordField, BooleanField
+from wtforms import Form, SubmitField, StringField, IntegerField, TextAreaField, SelectField, PasswordField, \
+    BooleanField, validators
 from wtforms.validators import DataRequired
 
 class SearchForm(FlaskForm):
@@ -41,43 +42,31 @@ class SignUpForm(FlaskForm):
     address_line_two = StringField('Address Line 2')
     city = StringField('City', validators=[DataRequired()])
     state_province_region = StringField('State/Province/Region', validators=[DataRequired()])
-    zip_postal_code = IntegerField('ZIP/Postal Code', validators=[DataRequired()])
+    zip_postal_code = StringField('ZIP/Postal Code', validators=[DataRequired()])
     country = StringField('Country', validators=[DataRequired()])
     submit = SubmitField('Create Account')
 
 
-class AddressForm(FlaskForm):
-    full_name = StringField('Full Name',validators=[DataRequired()])
-    address_line_one = StringField('Address Line 1',validators=[DataRequired()])
-    address_line_two = StringField('Address Line 2')
-    city = StringField('City',validators=[DataRequired()])
-    state_province_region = StringField('State/Province/Region',validators=[DataRequired()])
-    zip_postal_code = StringField('ZIP/Postal Code',validators=[DataRequired()])
-    country = StringField('Country',validators=[DataRequired()])
-    submit = SubmitField('Add Address')
-
-
 class ReviewForm(FlaskForm):
-    rating = IntegerField('# of Stars', validators=[DataRequired()])
-    review = StringField('Enter review')
+    rating = IntegerField('# of Stars',[validators.InputRequired("You got to enter some rating!")])
+    review = TextAreaField('Enter review')
     submit = SubmitField('Add rating')
 
 
-class EditUsernameForm(FlaskForm):
+class EditUserProfileForm(FlaskForm):
+    full_name = StringField('Full Name', validators=[DataRequired()])
     username = StringField('Username', validators=[DataRequired()])
-    submit = SubmitField('Edit Username')
-
-
-class EditEmailForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])
-    submit = SubmitField('Edit Email')
-
-
-class EditPasswordForm(FlaskForm):
-    current_password = PasswordField('Current Password', validators=[DataRequired()])
-    confirm_current_password = PasswordField('Confirm Current Password', validators=[DataRequired()])
-    new_password = PasswordField('New Password', validators=[DataRequired()])
-    submit = SubmitField('Edit Password')
+    address_line_one = StringField('Address Line 1', validators=[DataRequired()])
+    address_line_two = StringField('Address Line 2')
+    city = StringField('City', validators=[DataRequired()])
+    state_province_region = StringField('State/Province/Region', validators=[DataRequired()])
+    zip_postal_code = StringField('ZIP/Postal Code', validators=[DataRequired()])
+    country = StringField('Country', validators=[DataRequired()])
+    current_password = PasswordField('Old Password')
+    new_password = PasswordField('New Password')
+    confirm_new_password = PasswordField('Confirm Password')
+    submit = SubmitField('Save Changes')
 
 class MerchantSignup(FlaskForm):
     fullname = StringField('Name', validators=[DataRequired()])

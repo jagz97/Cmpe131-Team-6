@@ -81,54 +81,109 @@
   5. User is brought to "order is confirmed" page
 
 3. Update User Profile
+-**Summary**: A user visiting their profile will edit their profile and save the changes.
+
+-**Actors**: The user visiting the web store and the system
+
 - **Pre-condition:** the user needs to be signed in to an account in order to access the user profile page
 
-- **Trigger:** the user profile button is pressed that will appear on either a sidebar or a topbar. 
+- **Trigger:** the user profile button is pressed from the toolbar dropdown menu.
 
 - **Primary Sequence:**
   
-  1. The user will be able to scroll through their user profile and see different details about their profile
-  2. The user clicks on the edit button next to the variable they want to update
-  3. The user types in what they want to update the variable to in the text box that appears
-  4. The user clicks on the confirm button.
+  1. The system loads the user profile, fills in text fields with current user information, and loads submit button
+  2. The user will be able to scroll through their user profile and see different details about their profile
+  3. The user selects any number of text fields and updates the information.
+  4. The user clicks the save changes button.
+  5. The system verifies the required text fields are filled in, the username and email are not taken
+  6. The system verifies that the password fields are either all empty, or all filled in
+  7. The system verifies the current password is equal to the current password inputted and that the new password and the confirmation password are equal
+  8. The system updates the database with the new user object.
 
 - **Primary Postconditions:**
   
-  1. The user profile is updated with the new variable, and the user profile also displays the new variable.
+  1. The user profile is displayed with the new information
 
 - **Alternate Sequence:**
   
-  1. The user inputs a new variable which does not meet requirements which could be length requirements or specific character type requirements.
-  2. The text box displays an error message.
-  3. The confirm button is disabled until the textbox contains valid input.
+  1. The user leaves a required text field empty.
+  2. The user presses the save changes button.
+  3. The system checks if all required fields are filled in.
+  4. The system flashes an error message at the top of the screen.
 
 - **Alternate Sequence:**
   
-  1. The user clicks on the cancel button
-  2. The textbox to enter the new variable disappears.
+  1. The user inputs a username or email that is taken
+  2. The user presses the save changes button.
+  3. The system checks is all required fields are filled in.
+  4. The system checks if the email and username are unique.
+  5. The system flashes an error message at the top of the screen.
+  
+ - **Alternate Sequence:**
+  
+  1. The user inputs an incorrect current password
+  2. The user presses the save changes button.
+  3. The system checks is all required fields are filled in.
+  4. The system checks if the email and username are unique.
+  5. The system checks if the inputted current password hash matches the current password hash.
+  6. The system flashes an error message at the top of the screen.
+  
+   - **Alternate Sequence:**
+  
+  1. The user inputs a new password and a confirmation for new password that do not match
+  2. The user presses the save changes button.
+  3. The system checks is all required fields are filled in.
+  4. The system checks if the email and username are unique.
+  5. The system checks if the inputted current password hash matches the current password hash.
+  6. The system checks if the two passwords are equal.
+  7. The system flashes an error message at the top of the screen.
+  
 
 4. Add User Rating
-- **Pre-condition:** the user needs to be signed in to an account and must have purchased an item in order to add a rating for the item
+- **Summary**: A user adds a rating and review for a product.
 
-- **Trigger:** the user clicks on the add rating button/ edit rating button  on the item page
+- **Actors**: The user visiting the web store and the system
+
+- **Pre-condition:** the user needs to be signed in to an account
+
+- **Trigger:** the user clicks on the add rating button/ edit rating button on the product page/card
 
 - **Primary Sequence:**
 
   1. The user is taken to another page for adding a review.
-  2. The user selects a star rating out of 5 stars
-  3. The user can type in a review in the text box or leave it blank if they do not want to leave a review
-  4. The user clicks on the confirm button to finish adding the rating.
+  2. The system loads the text field, integer field, and the submit button.
+  3. The user selects a star rating out of 5 stars
+  4. The user can type in a review in the text box or leave it blank if they do not want to leave a review
+  5. The user clicks on the confirm button to finish adding the rating.
+  6. The system verifies that all required fields are filled in.
+  7. The system verifies that the rating is from 0 to 5 stars.
+  8. The system stores the rating in the database.
+  9. The system loads the product page with the new review loaded in.
   
 - **Primary Postconditions:**
 
   1. The user is returned to the page for the item.
-  2. The item's average rating is updated and the number of ratings for the item is updated.
+  2. The system displays a list of all reviews for the product on the product page.
 
 - **Alternate Sequence:**
 
   1. The user clicks on the cancel button
-  2. An "are you sure you want to leave this review" message pops up.
-  3. The user clicks on the "leave" button to return to the item page.
+  2. The system loads the product page.
+  
+- **Alternate Sequence:**
+  
+  1. The user leaves a required field empty.
+  2. The user presses the submit button
+  3. The system checks if all required fields are filled in.
+  4. The system flashes an error message at the top of the page.
+
+- **Alternate Sequence:**
+  
+  1. The user inputs a star rating that is not from 0 to 5
+  2. The user presses the submit button
+  3. The system checks if all required fields are filled in.
+  4. The system checks if the star rating is from 0 to 5
+  5. The system flashes an error message at the top of the page.
 
 5. Splash Page
 

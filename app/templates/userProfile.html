@@ -6,57 +6,160 @@
         {% if messages %}
 
         {% for message in messages %}
-        {{ message }}
+          <div class="alert alert-primary" role="alert">
+              {{ message }}
+          </div>
         {% endfor %}
         {% endif %}
         {% endwith %}
+{% for field, errors in form.errors.items() %}
+<div class="alert alert-primary" role="alert">
+    {{ form[field].label }}: {{ ', '.join(errors) }}
+</div>
+{% endfor %}
+<head>
+    <link rel="stylesheet" type="text/css" href="static/css/userProfile.css">
+    <script>
+        $(document).ready(function() {
+    $("#my-modal").modal();
+  });
+    </script>
+</head>
 
-    {% if user %}
+<div class="container">
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-10 col-xl-8 mx-auto">
+        <h2 class="h3 mb-4 page-title">Settings</h2>
+        <div class="my-4">
+            <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="profile-tab" data-toggle="tab" href="{{ url_for('userprofile') }}" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
+                </li>
+            </ul>
+            <form action="" method="post" novalidate>
+                {{ form.hidden_tag() }}
+                <div class="row mt-5 align-items-center">
+                    <div class="col">
+                        <div class="row align-items-center">
+                            <div class="col-md-7">
+                                <h4 class="mb-1">{{ user.username }}</h4>
+                                <p class="small mb-3"><span class="badge badge-dark">{{ user.state_province_region }}, {{ user.country }}</span></p>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col">
+                                <p class="small mb-0 text-muted">{{ user.full_name }}</p>
+                                <p class="small mb-0 text-muted">{{ user.address_line_one }} {{ user.address_line_two }}</p>
+                                <p class="small mb-0 text-muted">{{ user.city }}, {{ user.state_province_region }}, {{ user.zip_postal_code }}</p>
+                                <p class="small mb-0 text-muted">{{ user.country }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr class="my-4" />
+                <div class="form-group">
+                    {{ form.full_name.label }}
+                    {{ form.full_name(class="form-control", value=user.full_name) }}
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                    {{ form.username.label }}
+                    {{ form.username(class="form-control", value=user.username) }}
+                    </div>
+                    <div class="form-group col-md-6">
+                    {{ form.email.label }}
+                    {{ form.email(class="form-control", value=user.email) }}
+                </div>
+                </div>
+                <div class="form-group">
+                    {{ form.address_line_one.label }}
+                    {{ form.address_line_one(class="form-control", value=user.address_line_one) }}
+                </div>
+                <div class="form-group">
+                    {{ form.address_line_two.label }}
+                    {{ form.address_line_two(class="form-control", value=user.address_line_two) }}
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-5">
+                        {{ form.city.label }}
+                        {{ form.city(class="form-control", value=user.city) }}
+                    </div>
+                    <div class="form-group col-md-5">
+                        {{ form.state_province_region.label }}
+                        {{ form.state_province_region(class="form-control", value=user.state_province_region) }}
+                    </div>
+                    <div class="form-group col-md-2">
+                        {{ form.zip_postal_code.label }}
+                        {{ form.zip_postal_code(class="form-control", value=user.zip_postal_code) }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-5">
+                        {{ form.country.label }}
+                        {{ form.country(class="form-control", value=user.country) }}
+                    </div>
+                </div>
+                <hr class="my-4" />
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ form.current_password.label }}
+                            {{ form.current_password(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.new_password.label }}
+                            {{ form.new_password(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.confirm_new_password.label }}
+                            {{ form.confirm_new_password(class="form-control") }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2">Account Deletion</p>
+                        <p class="small text-muted mb-2">To delete your account, press the button below and confirm the deletion.</p>
+                        <!-- Trigger the modal with a button -->
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#myModal">Delete Account</button>
+                        <!-- Modal -->
+                        <div id="myModal" class="modal fade" role="dialog">
+                          <div class="modal-dialog modal-dialog-centered" role="document">
+                               <!-- Modal content-->
+                            <div class="modal-content border-0">
+                                <div class="modal-body p-0">
+                                    <div class="card border-0 p-sm-3 p-2 justify-content-center">
+                                        <div class="card-header pb-0 bg-white border-0 ">
+                                            <div class="row">
+                                                <div class="col ml-auto">
+                                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <p class="font-weight-bold mb-2"> Are you sure you wanna delete this account?</p><p class="text-muted "> WARNING: This action cannot be undone!</p>
+                                        </div>
+                                        <div class="card-body px-sm-4 mb-2 pt-1 pb-0">
+                                            <div class="row justify-content-end no-gutters"><div class="col-auto">
+                                                <button type="button" class="btn btn-light text-muted" data-bs-dismiss="modal">Cancel</button>
+                                            </div>
+                                            <div class="col-auto">
+                                                    <button type="button" class="btn btn-danger px-4" onclick="location.href = 'delete/confirm';">Delete</button>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-    <h1>
-        User: {{ user.username }}
-    </h1>
-    {% endif %}
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                {{ form.submit(class="btn btn-primary") }}
+            </form>
+        </div>
+    </div>
+</div>
 
-    <form action ="" method="post" novalidate>
-        <input type="submit" name="Edit Username" value="Edit Username">
-    </form>
-
-    {% if user %}
-    <h4>
-        Current Email: {{ user.email }}
-    </h4>
-    {% endif %}
-
-    <form action ="" method="post" novalidate>
-        <input type="submit" name="Edit Email" value="Edit Email">
-    </form>
-
-    <form action ="" method="post" novalidate>
-        <input type="submit" name="Edit Password" value="Edit Password">
-    </form>
-
-    {% if user %}
-    <h4>
-        Address
-    </h4>
-    <ul>
-        <li>Full name: {{ user.full_name }}</li>
-        <li>Address Line One: {{ user.address_line_one }}</li>
-        <li>Address Line Two: {{ user.address_line_two }}</li>
-        <li>City: {{ user.city }}</li>
-        <li>State/Province/Region = {{ user.state_province_region }}</li>
-        <li>Zip/Postal Code:{{ user.zip_postal_code }}</li>
-        <li>Country: {{ user.country }}</li>
-    </ul>
-    {% endif %}
-
-    <form action ="" method="post" novalidate>
-        <input type="submit" name="Edit Address" value="Edit Address">
-    </form>
-
-    <form action ="" method="post" novalidate>
-        <input type="submit" name="Delete Account" value="Delete Account">
-    </form>
+</div>
 
 {% endblock content %}

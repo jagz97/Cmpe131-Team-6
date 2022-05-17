@@ -1,3 +1,4 @@
+from datetime import datetime
 import secrets
 
 from flask import render_template, redirect, url_for, request, flash, session
@@ -6,8 +7,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import app as app
 from app import db, photos
-from app.forms import Products, LoginForm, SignUpForm, ReviewForm, EditUsernameForm, EditPasswordForm, EditEmailForm, \
-    AddressForm, MerchantSignup, MerchantLogin
+from app.forms import Products, LoginForm, SignUpForm, ReviewForm, MerchantSignup, MerchantLogin, EditUserProfileForm
 from app.helpers import seller_required
 from app.models import Brand, Category, AddProduct, User, Review, Merchant, CustomerOrder
 import stripe
@@ -138,7 +138,8 @@ def addproduct():
             return redirect(url_for('addproduct'))
 
         addprod = AddProduct(name=name, price=price, category_id=category, brand_id=brand, discount=discount,
-                             description=description, availablestock=availablestock, image=image, image_1=image_1,
+                             description=description, availablestock=availablestock, average_rating=None,
+                             review_numbers=0, image=image, image_1=image_1,
                              image_2=image_2, username=session['username'])
 
         db.session.add(addprod)
@@ -344,130 +345,79 @@ def signup():
 
 @app.route('/product/<product_id>', methods=['GET', 'POST'])
 def productpage(product_id):
+    user = None
+    form = ReviewForm(request.form)
     product = AddProduct.query.get(product_id)
+    if current_user.is_authenticated:
+        user = current_user
+    if form.validate_on_submit():
+        reviewExists = False
+        # get the old review object if it exists
+        review = Review.query.filter(Review.username == user.username and Review.product_id == product_id).first()
+        if review != None:
+            reviewExists = True
+        rating = form.rating.data
+        reviewdata = form.review.data
+        if rating <= 5 and rating >= 0:
+            ## if there is no review, then add a review
+            if reviewExists:
+                old_rating = review.rating
+                review.review = reviewdata
+                review.rating = rating
+                review.created_date = datetime.now(tz=None)
+                db.session.commit()
+                average_rating = float(
+                    (product.average_rating * product.review_numbers) - old_rating + rating) / product.review_numbers
+                product.average_rating = average_rating
+                db.session.commit()
+                flash(f'Your review has been updated')
+            else:
+                newreview = Review(username=user.username, rating=rating, review=reviewdata, product_id=product_id)
+                db.session.add(newreview)
+                product.review_numbers += 1
+                db.session.commit()
+                if product.average_rating == None:
+                    product.average_rating = rating
+                average_rating = float(
+                    product.average_rating * (product.review_numbers - 1) + rating) / product.review_numbers
+                product.average_rating = average_rating
+                db.session.commit()
+
+                flash(f'Your review has been added')
+        else:
+            flash('Rating must be from 0-5 stars')
     reviews = product.reviews
-    if 'Rate Product' in request.form:
-        if current_user.is_authenticated:  # if user is logged in, route to review page, otherwise, route to login page
-            return redirect(url_for('review', product_id=product_id))
-        return redirect(url_for('login'))
-    return render_template('items/productDetails.html', title='Product Details', product=product, reviews=reviews)
+    zero_star = 0
+    one_star = 0
+    two_star = 0
+    three_star = 0
+    four_star = 0
+    five_star = 0
+    for review in reviews:
+        if (review.rating == 0):
+            zero_star += 1
+        elif (review.rating == 1):
+            one_star += 1
+        elif (review.rating == 2):
+            two_star += 1
+        elif (review.rating == 3):
+            three_star += 1
+        elif (review.rating == 4):
+            four_star += 1
+        elif (review.rating == 5):
+            five_star += 1
+    return render_template('items/productDetails.html', title='Product Details', product=product, reviews=reviews,
+                           zero_star=zero_star, one_star=one_star, two_star=two_star, three_star=three_star,
+                           four_star=four_star, five_star=five_star, form=form, user=user)
 
-
-@app.route('/product/review/<product_id>', methods=['GET', 'POST'])
-def review(product_id):
-    product = AddProduct.query.get(product_id)
-    if product == None:
-        return redirect(url_for('home'))
-    if current_user.is_authenticated:
-        # if the cancel button is pressed, then route to the product page
-        form = ReviewForm(request.form)
-        if 'Cancel Review' in request.form:
-            return redirect(url_for('productpage', product_id=product_id))
-            # if a user is logged in and has selected a product to review, then the review is added
-        if form.validate_on_submit():
-            user = current_user
-            reviewExists = False
-            # get the old review object if it exists
-            review = Review.query.filter(Review.username == user.username and Review.product_id == product_id).first()
-            if review != None:
-                reviewExists = True
-            rating = form.rating.data
-            reviewdata = form.review.data
-            if rating <= 5 and rating >= 0:
-                ## if there is no review, then add a review
-                if reviewExists:
-                    review.review = reviewdata
-                    review.rating = rating
-                    db.session.commit()
-                    flash(f'Your review has been updated')
-                else:
-                    newreview = Review(username=user.username, rating=rating, review=reviewdata, product_id=product_id)
-                    db.session.add(newreview)
-                    db.session.commit()
-                    flash(f'Your review has been added')
-                return redirect(url_for('productpage', product_id=product_id))
-            else:
-                flash('Rating must be from 0-5 stars')
-    else:
-        return redirect(url_for('login'))
-    return render_template('items/productReview.html', title='Product Review', form=form, product=product)
-
-
-@app.route('/user/profile/username', methods=['GET', 'POST'])
-def editusername():
-    if current_user.is_authenticated:
-
-        user = current_user
-        form = EditUsernameForm(request.form)
-        if form.validate_on_submit():
-            new_username = form.username.data
-            try:
-                user.username = new_username
-                db.session.commit()
-                return redirect(url_for('userprofile'))
-            except Exception:
-                db.session.rollback()
-                flash('The username is taken')
-        if 'Cancel' in request.form:
-            return redirect(url_for('userprofile'))
-    else:
-        return redirect(url_for('login'))
-    return render_template('editUsername.html', title='Edit Username', form=form, user=user)
-
-
-@app.route('/user/profile/email', methods=['GET', 'POST'])
-def editemail():
+@app.route('/user/profile', methods=['GET', 'POST'])
+def userprofile():
     if current_user.is_authenticated:
         user = current_user
-        form = EditEmailForm(request.form)
+        form = EditUserProfileForm(request.form)
         if form.validate_on_submit():
-            new_email = form.email.data
-            try:
-                user.email = new_email
-                db.session.commit()
-                return redirect(url_for('userprofile'))
-            except Exception:
-                db.session.rollback()
-                flash('Email is already used')
-        if 'Cancel' in request.form:
-            return redirect(url_for('userprofile'))
-    else:
-        return redirect(url_for('login'))
-    return render_template('editEmail.html', title='Edit Email', form=form, user=user)
-
-
-@app.route('/user/profile/password', methods=['GET', 'POST'])
-def editpassword():
-    if current_user.is_authenticated:
-        user = current_user
-        form = EditPasswordForm(request.form)
-        if form.validate_on_submit():
-            current_password = form.current_password.data
-            confirm_current_password = form.confirm_current_password.data
-            new_password = form.new_password.data
-            new_password_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
-            if current_password == confirm_current_password:
-                if check_password_hash(user.password_hash, current_password):
-                    user.password_hash = new_password_hash
-                    db.session.commit()
-                    return redirect(url_for('userprofile'))
-                else:
-                    flash('The password is incorrect')
-            else:
-                flash('The two passwords do not match')
-        if 'Cancel' in request.form:
-            return redirect(url_for('userprofile'))
-    else:
-        return redirect(url_for('login'))
-    return render_template('editPassword.html', title='Edit Password', form=form, user=user)
-
-
-@app.route('/user/profile/address', methods=['GET', 'POST'])
-def editaddress():
-    if current_user.is_authenticated:
-        user = current_user
-        form = AddressForm(request.form)
-        if form.validate_on_submit():
+            user.username = form.username.data
+            user.email = form.email.data
             user.full_name = form.full_name.data
             user.address_line_one = form.address_line_one.data
             user.address_line_two = form.address_line_two.data
@@ -475,49 +425,47 @@ def editaddress():
             user.state_province_region = form.state_province_region.data
             user.zip_postal_code = form.zip_postal_code.data
             user.country = form.country.data
-            db.session.commit()
-            return redirect(url_for('userprofile'))
-        if 'Cancel' in request.form:
-            return redirect(url_for('userprofile'))
+            current_password = form.current_password.data
+            new_password = form.new_password.data
+            confirm_new_password = form.confirm_new_password.data
+            new_password_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
+            if current_password != "" and new_password != "" and confirm_new_password != "":
+                if new_password == confirm_new_password:
+                    if check_password_hash(user.password_hash, current_password):
+                        user.password_hash = new_password_hash
+                        try:
+                            db.session.commit()
+                        except Exception:
+                            db.session.rollback()
+                            flash('Email and/or Username is already used')
+                    else:
+                        flash('The password is incorrect')
+                else:
+                    flash('The two passwords do not match')
+            elif not (current_password == "" and new_password == "" and confirm_new_password == ""):
+                flash('There is an empty password field')
+            else:
+                try:
+                    db.session.commit()
+                except Exception:
+                    db.session.rollback()
+                    flash('Email and/or Username is already used')
     else:
         return redirect(url_for('login'))
-    return render_template('editAddress.html', title='Edit Address', form=form, user=user)
+    return render_template('userProfile.html', title='User Profile', user=user, form=form)
 
 
-@app.route('/user/profile', methods=['GET', 'POST'])
-def userprofile():
-    if current_user.is_authenticated:
-        user = current_user
-        if 'Edit Username' in request.form:
-            return redirect(url_for('editusername'))
-        if 'Edit Email' in request.form:
-            return redirect(url_for('editemail'))
-        if 'Edit Password' in request.form:
-            return redirect(url_for('editpassword'))
-        if 'Edit Address' in request.form:
-            return redirect(url_for('editaddress'))
-        if 'Delete Account' in request.form:
-            return redirect(url_for('deleteaccount'))
-    else:
-        return redirect(url_for('login'))
-    return render_template('userProfile.html', title='User Profile', user=user)
-
-
-@app.route('/user/delete', methods=['GET', 'POST'])
+@app.route('/user/delete/confirm', methods=['GET', 'POST'])
 def deleteaccount():
     if current_user.is_authenticated:
         user = current_user
-        if 'Yes' in request.form:
-            username = user.username
-            db.session.delete(user)
-            db.session.commit()
-            flash('User {} has been deleted'.format(username))
-            return redirect(url_for('home'))
-        if 'No' in request.form:
-            return redirect(url_for('login'))
+        username = user.username
+        db.session.delete(user)
+        db.session.commit()
+        flash('User {} has been deleted'.format(username))
+        return redirect(url_for('home'))
     else:
         return redirect(url_for('login'))
-    return render_template('deleteAccount.html', title='Delete Account', user=user)
 
 
 @app.route('/login', methods=['GET', 'POST'])
