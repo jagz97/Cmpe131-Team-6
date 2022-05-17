@@ -1,10 +1,12 @@
 <!doctype html>
 <html lang="en">
 
+
 <head>
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="static/css/home.css">
 	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <!-- Bootstrap CSS -->
@@ -15,6 +17,7 @@
     <div class="container-fluid">
       <a class="navbar-brand" href="{{ url_for('home') }}" >
           <img src="static/img/logo1.png"  width="150" alt="" class="d-inline-block align-middle mr-2">
+          <span style="margin-left: -20px">Home</span>
 
       </a>
 
@@ -26,7 +29,7 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <form class="d-flex" action="{{url_for('result')}}">
 
-          <input class="form-control me-2 m-md-auto" type="search" placeholder="Search for products" aria-label="Search" , name="q" style="margin-left: -20px;">
+          <input class="form-control me-2 m-md-auto" type="search" placeholder="Search for products" aria-label="Search" , name="q" style="margin-left: -20px; width: 300px;">
           <button class="btn btn-dark" type="submit">Search</button>
         </form>
         <ul class="navbar-nav ml-auto mb-2 mb-lg-0">

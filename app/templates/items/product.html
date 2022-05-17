@@ -1,52 +1,77 @@
 
-<div>
+{% extends "base.html" %}
 
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
+{% block content %}
+{% with messages = get_flashed_messages() %}
+        {% if messages %}
 
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
-<a href="{{ url_for('logut_merchant')}} ">logout</a>
-    <h1>ADD Product</h1>
+        {% for message in messages %}
+          <div class="alert alert-success" role="alert" style="margin-top: 10px">
+              {{ message }}
+          </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+{% for field, errors in form.errors.items() %}
 
-    <form enctype=multipart/form-data action="{{ url_for('addproduct') }}" method="POST">
+
+<div class="alert alert-primary" role="alert" style="margin-top: 10px">
+    {{ form[field].label }}: {{ ', '.join(errors) }}
+</div>
+{% endfor %}
+
+
+
+    <a href="{{ url_for('logut_merchant')}}" class=" btn btn-dark btn-lg"role="button" style="margin-top: 10px">Seller Logout</a>
+
+<div class="container" style="margin-top: 10px">
+  <div class="row mx-0 justify-content-center">
+    <div class="col-md-7 col-lg-5 px-lg-2 col-xl-4 px-xl-0 px-xxl-3">
+        <form class="w-100 rounded-1 p-4 border bg-white" enctype=multipart/form-data action="{{ url_for('addproduct') }}" method="POST">
         {{form.hidden_tag()}}
-        <p>
-            {{ form.name.label }}
-            {{ form.name(size=32) }}
 
-        </p>
+          <h1>Add Product</h1>
+        <label class="d-block mb-4">
+          <span class="form-label d-block">Product name</span>
+            {{ form.name(class="form-control",
+            placeholder="Your Product Name") }}
 
-        <p>
-            {{ form.description.label }}
-            {{ form.description() }}
-
-        </p>
-
-        <p>
-            {{ form.discount.label }}
-            {{ form.discount(size=3) }}
-
-        </p>
-
-        <p>
-            {{ form.price.label }}
-            {{ form.price(size=32) }}
-
-        </p>
-
-        <p>
-            {{ form.availableStock.label }}
-            {{ form.availableStock (size=32) }}
-
-        </p>
+        </label>
 
 
-        <p>
-            <label for="category">Add a Category</label>
+
+
+
+
+
+
+
+
+
+
+            <label class="d-block mb-4">
+          <span class="form-label d-block">Description</span>
+                {{ form.description(class="form-control",rows="3",placeholder="Write your product description") }}
+        </label>
+
+        <label class="d-block mb-4">
+          <span class="form-label d-block">Price</span>
+            {{ form.price(class="form-control",placeholder="Amount in Dollars") }}
+        </label>
+
+            <label class="d-block mb-4">
+          <span class="form-label d-block">Discount</span>
+            {{ form.discount(class="form-control",placeholder="Discount Percentage") }}
+        </label>
+
+            <label class="d-block mb-4">
+          <span class="form-label d-block">Available Stock</span>
+            {{ form.availableStock(class="form-control",placeholder="Number of items") }}
+        </label>
+
+            <label class="d-block mb-4">
+          <span class="form-label d-block">Add Category</span>
+
             <select name="category" id="category" required>
                 <option value="">Pick category</option>
                 {% for i in categories %}
@@ -56,11 +81,13 @@
             </select>
 
             <a href="{{ url_for('addcategory') }}" class="link-primary">Add Category</a>
+        </label>
 
-        </p>
 
-        <p>
-            <label for="brand">Add a Brand</label>
+        <label class="d-block mb-4">
+          <span class="form-label d-block">Add Brand</span>
+
+
             <select name="brand" id="brand" required>
                 <option value="">Pick Brand</option>
                 {% for i in brands %}
@@ -69,23 +96,37 @@
             </select>
 
             <a href="{{ url_for('addbrand') }}" class="link-primary">Add Brand</a>
-
-        </p>
-        {{ form.image }}
-        {{ form.image_1 }}
-        {{ form.image_2 }}
+        </label>
 
 
-        <p>
 
-        </p>
 
-        <p>
-            {{ form.submit() }}
-        </p>
-    </form>
+
+
+        <label class="d-block mb-4">
+          <span class="form-label d-block">Product Images</span>
+          <p>{{ form.image }}</p>
+        <p>{{ form.image_1 }}</p>
+        <p>{{ form.image_2 }}</p>
+        </label>
+
+
+
+        <div class="mb-3">
+          {{ form.submit(class="btn btn-primary btn-lg") }}
+        </div>
+
+
+      </form>
+    </div>
+  </div>
 </div>
 
+
+
+
+
+<h1 class="text-uppercase position-static"> Your Products</h1>
 
 <div>
     <div class="row">
@@ -114,3 +155,4 @@
     </div>
 </div>
 
+{% endblock content %}
