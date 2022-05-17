@@ -76,7 +76,7 @@ class MerchantSignup(FlaskForm):
     submit = SubmitField('Submit')
 
 class MerchantLogin(FlaskForm):
-    fullname = StringField('Name', validators=[DataRequired()])
+    fullname = StringField('Username', validators=[DataRequired()])
     password = PasswordField("Password",validators=[DataRequired()])
     submit = SubmitField('Submit')
 

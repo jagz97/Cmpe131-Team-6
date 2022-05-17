@@ -21,9 +21,11 @@
     <form action="{{ url_for('login_merchant') }}" method="POST">
         <h2 class="text-center">Log in</h2>
         <div class="form-group">
+            {{ form.fullname.label }}
             {{ form.fullname(size=32) }}
         </div>
         <div class="form-group">
+            {{ form.password.label }}
             {{ form.password(size=32) }}
         </div>
         <div class="form-group">
