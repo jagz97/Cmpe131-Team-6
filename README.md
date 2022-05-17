@@ -188,8 +188,9 @@ def payment():
 
 - Merchants can signup at `/signupmerchant` and login/logout at `/merchantlogin` `/merchantlogout` (Jagjit Singh)
 - Merchants can add items to seller and view their added products at `/addproduct` (Jagjit Singh)
-- Merchants can add pictures for product at `/addproduct` form and itemts are posted with pictures at `/` home (Jagjit Singh)
-- Customers can search for items from navbar search located at `/home` home (Jagjit Singh)
+- Merchants can add pictures for product at `/addproduct` form and items are posted with pictures at `/` home (Jagjit Singh)
+- Merchants can add items to bid with a starting bid price and must add pictures when adding the item at `/addbiddableitem` (Nicholas Bao)
+- Customers can search for items from navbar search located at `/` home (Jagjit Singh)
 - Customers can add items to cart from home `/` and view cart items added in cart at `/cart' (Jagjit Singh)
 - Customers can  login at `/login` logout at`/logout` (Jagjit Singh)
 - Customers can create customer account is at /signUp (Hector Saldivar)
@@ -205,7 +206,7 @@ def payment():
 # Cmpe131 Team 6
 - Hector Saldivar (@HectorSal) Team Lead
 - Jagjit Singh (@jagz97)
-- Nicholas Bao (@ncik55808)
+- Nicholas Bao (@nick55808)
 
 
 

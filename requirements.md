@@ -26,18 +26,24 @@
 ## Use Cases
 
 1. Add to cart
+
+- **Summary:** Before buying an item, a user must be able to add an item to a cart and then they are able to buy their item. This function, add to cart, makes it so the user can add the item to their cart. 
+
+- **Actors:** The user looking to add an item they are interested into a cart
+
 - **Pre-condition:** User is looking at an item/product and if they decide they want save the item for purchase
 
 - **Trigger:** The user clicks a button and the item will be added to their personalized cart
 
 - **Primary Sequence:**
   
-  1. User first clicks on item they are interested in
+  1. User clicks on item they are interested in
   2. User clicks the "Add to cart" button
-  3. A login page is brought up 
-  4. User types usernamne and password
-  5. User logs into their account
-  6. Item is aded to cart
+  3. System displays login page for user to login
+  4. User types usernamne and password to login
+  5. System verifies user
+  6. Sytem adds Item to the users cart
+  7. System brings up original items page User started on
 
 - **Primary Postconditions:** User is back at items page
 
@@ -45,20 +51,25 @@
   
   1. User clicks on item they are interested in
   2. User clicks the "Add item to car" button
-  3. Item is added to cart
-  4. User is brought back to items page
+  3. System adds Item to the users cart
+  4. System brings up original items page User started on
 
 - **Alternate Sequence:** User does not have an account
   
   1. User first clicks on item they are interested in
   2. User clicks the "Add to cart" button
-  3. A login page is brought up 
+  3. System displays login page for user to login
   4. User clicks on create an account
   5. User creates an account
   6. User logs into their account
-  7. Item is aded to cart
+  7. System adds Item to the users cart
+  8. System brings up original items page User started on
 
 2. Buy Items
+
+- **Summary:** A user that is looking to buy an item would run through this function, adding in their payment information and checking out would bring them to a confirmation screen. 
+
+-**Actors:** The users looking to purchase an item in their cart.
 
 - **Pre-condition:** User has item added into cart and is ready to purchase (meaning that the user already has an account"
 
@@ -67,20 +78,18 @@
 - **Primary Sequence:** User has an account and is logged in without payment information
   
   1. User clicks "checkout item" to begin checkout scenario
-  2. User is brought to a page to input payment information (credit card info)
-  3. User is brought to input shipping information page
-  4. User is brought to confirmation page
-  5. User is brought to "order is confirmed" page
+  2. System displays page for user to enter payment information
+  3. System displays page where User inputs shipping information
+  4. System displays confirmation page
 
 - **Primary Postconditions:** User clicks on "home" button to return to homepage
 
 - **Alternate Sequence:** User has payment information inputed
   
-  1. User clicks on "checkout item"
-  2. User confirms payment information
-  3. User confirms shipping information
-  4. User is brought to confirmation page
-  5. User is brought to "order is confirmed" page
+  1. User clicks "checkout item" to begin checkout scenario
+  2. System displays existing payment and shipping information
+  3. User confirms both payment and shipping information
+  4. System displays confirmation page
 
 3. Update User Profile
 -**Summary**: A user visiting their profile will edit their profile and save the changes.

@@ -25,7 +25,20 @@ class Products(FlaskForm):
                         FileRequired(), FileAllowed(['png', 'gif', 'jpg', 'jpeg'])])
     image_2 = FileField('Image 3', validators=[
                         FileRequired(), FileAllowed(['png', 'gif', 'jpg', 'jpeg'])])
+                        
+class BidItem(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    description = TextAreaField('Description', validators=[DataRequired()])
+    price = IntegerField('Initial Bidding Price', validators=[DataRequired()])
 
+    image = FileField('Image 1', validators=[
+        FileRequired(), FileAllowed(['png', 'gif', 'jpg', 'jpeg'])])
+    image_1 = FileField('Image 2', validators=[
+                        FileRequired(), FileAllowed(['png', 'gif', 'jpg', 'jpeg'])])
+    image_2 = FileField('Image 3', validators=[
+                        FileRequired(), FileAllowed(['png', 'gif', 'jpg', 'jpeg'])])
+
+    submit = SubmitField('Submit')
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
