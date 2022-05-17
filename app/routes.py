@@ -11,10 +11,49 @@ from app.forms import Products, LoginForm, SignUpForm, ReviewForm, MerchantSignu
 from app.helpers import seller_required
 from app.models import Brand, Category, AddProduct, User, Review, Merchant, CustomerOrder
 import stripe
+import requests
 
 publishable_key = 'pk_test_51KxjFzLGavGifIHgE46wfoXUQnSmanRC0rX6KRsL6iH0gII3LZ1INayMe0nH51wIJdakCyEwhEoux6tjphnPIbnm00gWEU1Qcx'
 
 stripe.api_key = 'sk_test_51KxjFzLGavGifIHgiMdIOOdRlyHLKg0elxsL5iStElwzlbGrboQmH7RHtS1CJ8VxmZ2IrefIiCjPjZpNqNwG1Aep00kaUCU9cP'
+
+
+def subscribe_user(email, user_group_email, api_key):
+    """
+    Function that lets users to sign up to receive newsletter
+    """
+    resp = requests.post(f"https://api.mailgun.net/v3/lists/{user_group_email}/members",
+                         auth=("api", api_key),
+                         data={"subscribed": True,
+                               "address": email}
+                         )
+
+    print(resp.status_code)
+
+    return resp
+
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    """
+    Splash Page connected to API that lets users signup for newsletter
+    """
+    if request.method == "POST":
+        email = request.form.get('email')
+
+        subscribe_user(email=email,
+                       user_group_email="newsletter_products@sandbox7e131a1ce3fb434b96be63819cbf91d7.mailgun.org",
+                       api_key="6a30bb50eb9c8816d250c1ecf7b87302-5e7fba0f-3eccfe0c")
+        requests.post(
+            "https://api.mailgun.net/v3/sandbox7e131a1ce3fb434b96be63819cbf91d7.mailgun.org/messages",
+            auth=("api", "6a30bb50eb9c8816d250c1ecf7b87302-5e7fba0f-3eccfe0c"),
+            data={"from": "Excited User <mailgun@sandbox7e131a1ce3fb434b96be63819cbf91d7.mailgun.org>",
+                  "to": ["newsletter_products@sandbox7e131a1ce3fb434b96be63819cbf91d7.mailgun.org", "mailgun@sandbox7e131a1ce3fb434b96be63819cbf91d7.mailgun.org"],
+                  "subject": "Hello",
+                  "text": "You've been subscribed!"})
+        return redirect(url_for('home'))
+
+    return render_template('index.html')
 
 
 @app.route('/payments', methods=['GET', 'POST'])
@@ -46,7 +85,7 @@ def success():
     return render_template('success.html')
 
 
-@app.route('/')
+@app.route('/home')
 def home():
     """
     Route to the home page of the application
